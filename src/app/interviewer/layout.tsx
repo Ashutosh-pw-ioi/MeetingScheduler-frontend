@@ -2,16 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  User,
-  GraduationCap,
-  HelpCircle,
-  Menu,
-  X,
-  ChartPie,
-  CirclePlus,
-  Video,
-} from "lucide-react";
+import { HelpCircle, Menu, X, ChartPie, CirclePlus, Video } from "lucide-react";
 import Image from "next/image";
 
 const StudentLayout = ({ children }: { children: React.ReactNode }) => {
@@ -48,7 +39,7 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
 
   const getActiveSection = () => {
     if (pathname.includes("/addslots")) return "addslots";
-    if (pathname.includes("/meetins")) return "meetins";
+    if (pathname.includes("/meetings")) return "meetings";
     if (pathname.includes("/help")) return "help";
     return "overview";
   };
@@ -86,12 +77,6 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
       document.body.style.overflow = "unset";
     };
   }, [isMobileMenuOpen]);
-
-  const handleLogout = () => {
-    console.log("Logout clicked");
-
-    router.push("/auth/login/student");
-  };
 
   return (
     <div className="flex min-h-screen">
@@ -160,7 +145,7 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
         </nav>
       </div>
 
-      <div className="flex-1 p-6 bg-gray-100 lg:ml-0">{children}</div>
+      <div className="flex-1 p-6 bg-gray-50 lg:ml-0">{children}</div>
     </div>
   );
 };

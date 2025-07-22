@@ -12,7 +12,7 @@ import successAnimation from "../../../public/success.json";
 
 const SuccessComponent = () => {
   const [showAnimation, setShowAnimation] = useState(true);
-  const [showContent, setShowContent] = useState(false);
+  const [_, setShowContent] = useState(false);
 
   const storedForm = localStorage.getItem("interviewFormData");
   const name =
