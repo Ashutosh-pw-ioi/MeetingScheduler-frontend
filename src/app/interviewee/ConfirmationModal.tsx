@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { X, Calendar, Clock, AlertCircle } from "lucide-react";
+import axios, { AxiosError } from "axios";
 
 interface FormData {
   name: string;
@@ -23,6 +24,48 @@ interface FormErrors {
   phone: string;
 }
 
+interface BookingResponse {
+  message: string;
+  booking: {
+    id: string;
+    startTime: string;
+    endTime: string;
+    startTimeIST: string;
+    endTimeIST: string;
+    timezone: string;
+    studentName: string;
+    studentEmail: string;
+    studentPhone: string;
+  };
+  interviewer: {
+    name: string;
+    email: string;
+  };
+  meetingLink?: string;
+  importantNote?: string;
+  requiresInterviewerAction?: boolean;
+  calendarError?: boolean;
+}
+
+interface BookingErrorResponse {
+  message: string;
+  existingBooking?: {
+    id: string;
+    startTime: string;
+    timezone: string;
+    interviewerName: string;
+    status: string;
+  };
+  canBook: boolean;
+}
+
+type BookingAxiosError = AxiosError<BookingErrorResponse>;
+
+interface NetworkError extends Error {
+  code?: string;
+  request?: unknown;
+}
+
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   isOpen,
   onClose,
@@ -44,6 +87,9 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     phone: false,
   });
 
+  const [isBooking, setIsBooking] = useState(false);
+  const [bookingError, setBookingError] = useState<string>("");
+
   useEffect(() => {
     if (isOpen) {
       setTouched({
@@ -56,6 +102,8 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         email: "",
         phone: "",
       });
+      setIsBooking(false);
+      setBookingError("");
     }
   }, [isOpen]);
 
@@ -119,6 +167,10 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       ...prev,
       [field]: error,
     }));
+
+    if (bookingError) {
+      setBookingError("");
+    }
   };
 
   const handleBlur = (field: string) => {
@@ -149,6 +201,98 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     errors.email === "" &&
     errors.phone === "";
 
+  const getBookingStartTime = (): string => {
+    const selectedTimeSlot = localStorage.getItem("selectedTimeSlot");
+    if (selectedTimeSlot) {
+      try {
+        const slotData = JSON.parse(selectedTimeSlot);
+        if (slotData.startTimeISO) {
+          console.log("Using startTimeISO from localStorage:", slotData.startTimeISO);
+          return slotData.startTimeISO;
+        }
+      } catch (error) {
+        console.error("Error parsing selected time slot:", error);
+      }
+    }
+    
+    console.warn("Using fallback method to construct start time");
+    try {
+      const selectedDateObj = new Date(selectedDate);
+      if (isNaN(selectedDateObj.getTime())) {
+        throw new Error("Invalid selected date");
+      }
+      return selectedDateObj.toISOString();
+    } catch (error) {
+      console.error("Error creating fallback start time:", error);
+      return new Date().toISOString();
+    }
+  };
+
+  const handleBookingConfirm = async () => {
+    if (!isFormValid || isBooking) return;
+
+    setIsBooking(true);
+    setBookingError("");
+
+    try {
+      const startTimeISO = getBookingStartTime();
+      const bookingData = {
+        startTime: startTimeISO,
+        studentName: formData.name.trim(),
+        studentEmail: formData.email.trim(),
+        studentPhone: formData.phone.trim(),
+      };
+
+      console.log("Sending booking request:", bookingData);
+
+      const response = await axios.post<BookingResponse>(
+        `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000'}/api/booking/book`,
+        bookingData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          timeout: 30000, 
+        }
+      );
+
+      console.log("Booking successful:", response.data);
+      
+      localStorage.setItem("bookingSuccess", JSON.stringify(response.data));
+      
+      onFormDataChange({ name: "", email: "", phone: "" });
+      
+      onClose();
+      onConfirm();
+
+    } catch (error: unknown) {
+      console.error("Booking failed:", error);
+      
+      if (axios.isAxiosError(error)) {
+        const axiosError = error as BookingAxiosError;
+        if (axiosError.response?.data) {
+          const errorData: BookingErrorResponse = axiosError.response.data;
+          setBookingError(errorData.message);
+        } else if (axiosError.request) {
+          setBookingError("Network error. Please check your connection and try again.");
+        } else {
+          setBookingError("An unexpected error occurred. Please try again.");
+        }
+      } else if (error instanceof Error) {
+        const networkError = error as NetworkError;
+        if (networkError.code === 'ECONNABORTED') {
+          setBookingError("Request timeout. Please try again.");
+        } else {
+          setBookingError(`Error: ${networkError.message}`);
+        }
+      } else {
+        setBookingError("An unexpected error occurred. Please try again.");
+      }
+    } finally {
+      setIsBooking(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-lg flex items-center justify-center z-50 p-2 sm:p-4">
       <div className="bg-white rounded-lg shadow-xl w-full mx-2 sm:mx-4 sm:max-w-4xl transform transition-all flex flex-col max-h-[95vh] sm:max-h-[90vh]">
@@ -158,7 +302,8 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-600 hover:text-black transition-colors cursor-pointer p-1"
+            disabled={isBooking}
+            className="text-gray-600 hover:text-black transition-colors cursor-pointer p-1 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <X size={20} />
           </button>
@@ -171,6 +316,15 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                 Your Information
               </h3>
 
+              {bookingError && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                  <div className="flex items-start">
+                    <AlertCircle size={16} className="text-red-500 mr-2 mt-0.5 flex-shrink-0" />
+                    <p className="text-red-700 text-sm">{bookingError}</p>
+                  </div>
+                </div>
+              )}
+
               <div className="space-y-4 sm:space-y-5 max-w-sm">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -182,7 +336,8 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                     onChange={(e) => handleInputChange("name", e.target.value)}
                     onBlur={() => handleBlur("name")}
                     placeholder="Enter your full name"
-                    className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-md transition-colors focus:outline-none text-base ${
+                    disabled={isBooking}
+                    className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-md transition-colors focus:outline-none text-base disabled:opacity-50 disabled:cursor-not-allowed ${
                       getFieldMessage("name")?.type === "error"
                         ? "border-red-500 focus:border-red-500"
                         : "border-gray-300 focus:border-black"
@@ -217,7 +372,8 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                     onChange={(e) => handleInputChange("email", e.target.value)}
                     onBlur={() => handleBlur("email")}
                     placeholder="your.email@example.com"
-                    className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-md transition-colors focus:outline-none text-base ${
+                    disabled={isBooking}
+                    className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-md transition-colors focus:outline-none text-base disabled:opacity-50 disabled:cursor-not-allowed ${
                       getFieldMessage("email")?.type === "error"
                         ? "border-red-500 focus:border-red-500"
                         : "border-gray-300 focus:border-black"
@@ -252,7 +408,8 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                     onChange={(e) => handleInputChange("phone", e.target.value)}
                     onBlur={() => handleBlur("phone")}
                     placeholder="+91 12345-67890"
-                    className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-md transition-colors focus:outline-none text-base ${
+                    disabled={isBooking}
+                    className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-md transition-colors focus:outline-none text-base disabled:opacity-50 disabled:cursor-not-allowed ${
                       touched.phone && errors.phone
                         ? "border-red-500 focus:border-red-500"
                         : "border-gray-300 focus:border-black"
@@ -333,20 +490,21 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         <div className="flex flex-col sm:flex-row gap-3 p-4 sm:p-6 border-t border-gray-200 bg-gray-50 flex-shrink-0">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-3 text-black bg-white border-2 border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-100 ease-in-out font-medium cursor-pointer text-sm sm:text-base"
+            disabled={isBooking}
+            className="flex-1 px-4 py-3 text-black bg-white border-2 border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-100 ease-in-out font-medium cursor-pointer text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>
           <button
-            onClick={onConfirm}
-            disabled={!isFormValid}
+            onClick={handleBookingConfirm}
+            disabled={!isFormValid || isBooking}
             className={`flex-1 px-4 py-3 rounded-md transition-colors font-medium duration-100 ease-in-out text-sm sm:text-base ${
-              isFormValid
+              isFormValid && !isBooking
                 ? "bg-black text-white hover:bg-gray-950 cursor-pointer"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
             }`}
           >
-            Confirm Interview
+            {isBooking ? "Booking..." : "Confirm Interview"}
           </button>
         </div>
       </div>
