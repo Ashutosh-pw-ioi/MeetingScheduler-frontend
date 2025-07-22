@@ -14,8 +14,14 @@ const SuccessComponent = () => {
   const [showAnimation, setShowAnimation] = useState(true);
   const [showContent, setShowContent] = useState(false);
 
+  const storedForm = localStorage.getItem("interviewFormData");
+  const name =
+    storedForm && JSON.parse(storedForm).name
+      ? JSON.parse(storedForm).name
+      : "";
+
   const SuccessAnimation = () => (
-    <div className="">
+    <div className="w-64 h-64 flex items-center justify-center">
       <Lottie animationData={successAnimation} loop={true} autoplay={true} />
     </div>
   );
@@ -31,7 +37,7 @@ const SuccessComponent = () => {
 
   if (showAnimation) {
     return (
-      <div className="bg-gray-50 flex items-center justify-center">
+      <div className="flex items-center justify-center">
         <div className="text-center">
           <SuccessAnimation />
           <h2 className="mt-6 text-2xl font-bold text-gray-900 animate-fade-in">
@@ -51,7 +57,7 @@ const SuccessComponent = () => {
               <CircleCheck className="w-8 h-8" />
             </div>
             <h2 className="text-xl font-bold text-white mb-1">
-              Congratulations, UserName!
+              Congratulations, {name}!
             </h2>
             <p className="text-gray-300 leading-tight text-sm">
               Your interview has been successfully scheduled

@@ -9,7 +9,7 @@ interface RightPaneProps {
 
 export default function RightPane({ onDateClick }: RightPaneProps) {
   return (
-    <div className="bg-white rounded-r-xl px-6 sm:px-8 py-4 sm:py-12 flex flex-col items-start justify-start space-y-6">
+    <div className="bg-white rounded-r-xl px-6 sm:px-8 py-4 sm:py-6 flex flex-col items-start justify-start space-y-6">
       <h2 className="text-2xl font-bold text-gray-800 text-left">
         Select Date and Time
       </h2>

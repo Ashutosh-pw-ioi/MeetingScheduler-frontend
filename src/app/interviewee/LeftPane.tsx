@@ -1,24 +1,13 @@
 "use client";
 
 import React from "react";
-import { ArrowLeft, Clock, Video } from "lucide-react";
+import { Clock, Video } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
-interface LeftPaneProps {
-  isSlotsPane: boolean;
-  setIsSlotsPane: (arg0: boolean) => void;
-}
-
-export default function LeftPane({
-  isSlotsPane,
-  setIsSlotsPane,
-}: LeftPaneProps) {
-  const handleBack = () => {
-    setIsSlotsPane(false);
-  };
-
+export default function LeftPane({}) {
   return (
-    <div className="bg-white rounded-l-xl px-6 pt-6 sm:border-r-[0.25px] sm:border-black sm:py-10">
+    <div className="bg-white rounded-l-xl px-6 pt-6 sm:border-r-[0.25px] sm:border-black sm:py-6">
       <div className="flex items-center mb-10 justify-between">
         <Image
           src="/PWIOILogo.png"
@@ -27,14 +16,6 @@ export default function LeftPane({
           height={100}
           className="w-50"
         />
-        {isSlotsPane && (
-          <button
-            className="rounded-full p-1 border-2 border-black sm:hidden"
-            onClick={handleBack}
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-        )}
       </div>
 
       <div className="mb-6">
@@ -88,12 +69,16 @@ export default function LeftPane({
       </div>
 
       <div className="gap-3 hidden sm:flex">
-        <button className="bg-black text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors text-sm cursor-pointer">
-          Visit Website
-        </button>
-        <button className="bg-black text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors text-sm cursor-pointer">
-          Check YouTube
-        </button>
+        <Link href="https://pwioi.com/" target="blank">
+          <button className="bg-black text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors text-sm cursor-pointer">
+            Visit Website
+          </button>
+        </Link>
+        <Link href="https://www.youtube.com/@PW-IOI" target="blank">
+          <button className="bg-black text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors text-sm cursor-pointer">
+            Check YouTube
+          </button>
+        </Link>
       </div>
     </div>
   );

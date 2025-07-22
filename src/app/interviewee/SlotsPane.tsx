@@ -1,11 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Calendar, Clock } from "lucide-react";
 import ConfirmationModal from "./ConfirmationModal";
 
 interface SlotsPaneProps {
   selectedDate: Date | null;
+  refreshData: () => void;
+}
+
+interface FormData {
+  name: string;
+  email: string;
+  phone: string;
 }
 
 const dummySlots = [
@@ -27,27 +33,57 @@ const dummySlots = [
   "05:30pm",
 ];
 
-export default function SlotsPane({ selectedDate }: SlotsPaneProps) {
+export default function SlotsPane({
+  selectedDate,
+  refreshData,
+}: SlotsPaneProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    email: "",
+    phone: "",
+  });
 
   const handleNext = (index: number) => {
     setActiveIndex(index);
   };
 
-  const handleSubmit = (date: Date | null, index: number) => {
-    setIsModalOpen(true);
+  const handleSubmit = () => {
+    if (activeIndex !== null) {
+      setIsModalOpen(true);
+      localStorage.setItem("selectedTime", dummySlots[activeIndex]);
+    } else {
+      console.error("No slot selected!");
+    }
+  };
+
+  const handleFormDataChange = (newFormData: FormData) => {
+    setFormData(newFormData);
+    localStorage.setItem("interviewFormData", JSON.stringify(newFormData));
   };
 
   const handleModalConfirm = () => {
+    const appointmentData = {
+      date: selectedDate?.toISOString(),
+      time: activeIndex !== null ? dummySlots[activeIndex] : "",
+      formData: formData,
+    };
+
+    localStorage.setItem("appointmentData", JSON.stringify(appointmentData));
+
     console.log(
       `Date: ${selectedDate} | Time: ${
         activeIndex !== null ? dummySlots[activeIndex] : ""
-      }`
+      } | Form Data:`,
+      formData
     );
+
+    refreshData();
+
     setIsModalOpen(false);
     setActiveIndex(null);
-    // Add your confirmation logic here
+    setFormData({ name: "", email: "", phone: "" });
   };
 
   const handleModalClose = () => {
@@ -56,11 +92,11 @@ export default function SlotsPane({ selectedDate }: SlotsPaneProps) {
 
   return (
     <>
-      <div className="bg-white rounded-r-xl px-6 sm:px-8 py-4 sm:py-12 flex flex-col items-start justify-start space-y-6">
+      <div className="bg-white rounded-r-xl px-6 sm:px-8 sm:pl-0 py-4 sm:py-6 sm:pb-0 flex flex-col items-start justify-start space-y-6">
         <h2 className="text-2xl font-bold text-gray-800 text-left">
           {selectedDate?.toLocaleDateString()}
         </h2>
-        <div className="flex flex-col gap-2 overflow-y-scroll w-full max-h-[450px]">
+        <div className="flex flex-col gap-2 overflow-y-scroll w-full max-h-[475px]">
           {dummySlots.map((slot, index) => (
             <div
               className="flex items-center justify-between w-full gap-3"
@@ -76,7 +112,7 @@ export default function SlotsPane({ selectedDate }: SlotsPaneProps) {
                 className={`py-2 px-4 border-2 bg-black text-white rounded-md text-center cursor-pointer w-full font-semibold ${
                   activeIndex === index ? "block" : "hidden"
                 }`}
-                onClick={() => handleSubmit(selectedDate, index)}
+                onClick={handleSubmit}
               >
                 Next
               </button>
@@ -91,6 +127,8 @@ export default function SlotsPane({ selectedDate }: SlotsPaneProps) {
         onConfirm={handleModalConfirm}
         selectedDate={selectedDate?.toISOString() || ""}
         selectedTime={activeIndex !== null ? dummySlots[activeIndex] : ""}
+        formData={formData}
+        onFormDataChange={handleFormDataChange}
       />
     </>
   );
