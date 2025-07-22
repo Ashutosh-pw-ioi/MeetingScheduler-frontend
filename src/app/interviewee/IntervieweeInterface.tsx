@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import LeftPane from "./LeftPane";
 import RightPane from "./RightPane";
 import SlotsPane from "./SlotsPane";
+import SuccessComponent from "./SuccessComponent";
 
 export default function InterviewScheduler() {
   const [isSlotsPane, setIsSlotsPane] = useState(false);
@@ -42,9 +43,10 @@ export default function InterviewScheduler() {
           }`}
         >
           <LeftPane isSlotsPane={isSlotsPane} setIsSlotsPane={setIsSlotsPane} />
-          {(!isMobile || !isSlotsPane) && (
+          <SuccessComponent />
+          {/* {(!isMobile || !isSlotsPane) && (
             <RightPane onDateClick={handleDateClick} />
-          )}
+          )} */}
           {isSlotsPane && <SlotsPane selectedDate={selectedDate} />}
         </div>
       </div>

@@ -88,10 +88,10 @@ export default function LeftPane({
       </div>
 
       <div className="gap-3 hidden sm:flex">
-        <button className="bg-black text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors text-sm">
+        <button className="bg-black text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors text-sm cursor-pointer">
           Visit Website
         </button>
-        <button className="bg-black text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors text-sm">
+        <button className="bg-black text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-800 transition-colors text-sm cursor-pointer">
           Check YouTube
         </button>
       </div>
