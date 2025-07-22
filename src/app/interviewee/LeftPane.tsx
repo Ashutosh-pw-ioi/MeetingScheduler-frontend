@@ -1,13 +1,25 @@
 "use client";
 
 import React from "react";
-import { Clock, Video } from "lucide-react";
+import { ArrowLeft, Clock, Video } from "lucide-react";
 import Image from "next/image";
 
-export default function LeftPane() {
+interface LeftPaneProps {
+  isSlotsPane: boolean;
+  setIsSlotsPane: (arg0: boolean) => void;
+}
+
+export default function LeftPane({
+  isSlotsPane,
+  setIsSlotsPane,
+}: LeftPaneProps) {
+  const handleBack = () => {
+    setIsSlotsPane(false);
+  };
+
   return (
     <div className="bg-white rounded-l-xl px-6 pt-6 sm:border-r-[0.25px] sm:border-black sm:py-10">
-      <div className="flex items-center mb-10">
+      <div className="flex items-center mb-10 justify-between">
         <Image
           src="/PWIOILogo.png"
           alt="PWIOI Logo"
@@ -15,6 +27,14 @@ export default function LeftPane() {
           height={100}
           className="w-50"
         />
+        {isSlotsPane && (
+          <button
+            className="rounded-full p-1 border-2 border-black sm:hidden"
+            onClick={handleBack}
+          >
+            <ArrowLeft className="w-6 h-6" />
+          </button>
+        )}
       </div>
 
       <div className="mb-6">

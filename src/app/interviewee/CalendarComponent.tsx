@@ -34,7 +34,7 @@ export default function CalendarComponent({
       mode="single"
       selected={date}
       onSelect={handleDateSelect}
-      className="rounded-lg border border-black max-h-[500px] w-full"
+      className="rounded-lg border border-black max-h-[500px] w-full [&_button]:cursor-pointer [&_td]:cursor-pointer"
       modifiers={{
         highlighted: highlightedDates,
       }}
