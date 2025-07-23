@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { intervieweesData } from "../constants/IntervieweesData";
 import SimpleTable from "../../Table/SimpleTable";
 import EmptyList from "@/app/interviewer/EmptyList";
 import {
@@ -11,29 +10,10 @@ import {
   Link2,
   X as CloseIcon,
 } from "lucide-react";
+import { useIntervieweeData } from "../../../hooks/useInterviewee";
+import { Interviewee, IntervieweeTableData } from "../../../types/adminInterviewees.types";
 
-interface Interviewee {
-  name: string;
-  email: string;
-  phone: string;
-  slotBooked: boolean;
-  details: {
-    interviewerName: string;
-    date: string;
-    time: string;
-    meetingLink: string;
-  };
-}
-
-interface IntervieweeTableData {
-  sno: number;
-  name: string;
-  email: string;
-  phone: string;
-  slotBooked: string;
-  details: string;
-}
-
+// DetailsModal Component (Kept inside IntervieweesSection)
 function DetailsModal({
   interviewee,
   isOpen,
@@ -43,7 +23,7 @@ function DetailsModal({
   isOpen: boolean;
   onClose: () => void;
 }) {
-  if (!isOpen || !interviewee) return null;
+  if (!isOpen || !interviewee || !interviewee.details) return null;
 
   const { details } = interviewee;
 
@@ -110,21 +90,11 @@ function DetailsModal({
   );
 }
 
+// Main IntervieweesSection Component
 export default function IntervieweesSection() {
-  const [selectedInterviewee, setSelectedInterviewee] =
-    useState<Interviewee | null>(null);
+  const { intervieweesData, tableData, loading, error, refetch } = useIntervieweeData();
+  const [selectedInterviewee, setSelectedInterviewee] = useState<Interviewee | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const tableData: IntervieweeTableData[] = intervieweesData.map(
-    (i, index) => ({
-      sno: index + 1,
-      name: i.name,
-      email: i.email,
-      phone: i.phone,
-      slotBooked: i.slotBooked ? "Booked" : "Not Booked",
-      details: i.slotBooked ? "View" : "-",
-    })
-  );
 
   const handleViewDetails = (row: IntervieweeTableData) => {
     const fullData = intervieweesData.find((d) => d.email === row.email);
@@ -154,6 +124,41 @@ export default function IntervieweesSection() {
       document.body.style.overflow = "unset";
     };
   }, [isModalOpen]);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="p-4 relative">
+        <div className="text-3xl font-bold mb-8">Interviewees Management</div>
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading interviewees...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="p-4 relative">
+        <div className="text-3xl font-bold mb-8">Interviewees Management</div>
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <p className="text-red-600 mb-4">{error}</p>
+            <button
+              onClick={refetch}
+              className="bg-gray-900 hover:bg-gray-800 text-white px-6 py-2 rounded-xl"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 relative">
