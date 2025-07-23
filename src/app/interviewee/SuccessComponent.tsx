@@ -87,12 +87,12 @@ const SuccessComponent = () => {
   }
 
   const formatMeetingLink = (link: string) => {
-    return link.replace(/^https?:\/\//, '');
+    return link.replace(/^https?:\/\//, "");
   };
 
   const handleMeetingLinkClick = () => {
     if (bookingData.meetingLink) {
-      window.open(bookingData.meetingLink, '_blank', 'noopener,noreferrer');
+      window.open(bookingData.meetingLink, "_blank", "noopener,noreferrer");
     }
   };
 
@@ -101,12 +101,12 @@ const SuccessComponent = () => {
       <div className="max-w-md w-full">
         <div className="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden">
           <div className="bg-black p-6 text-center">
-            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-2">
-              <CircleCheck className="w-8 h-8" />
+            <div className="flex items-center justify-center gap-2">
+              <CircleCheck className="w-6 h-6 text-white" />
+              <h2 className="text-xl font-bold text-white mb-1">
+                Congratulations, {bookingData.booking.studentName}!
+              </h2>
             </div>
-            <h2 className="text-xl font-bold text-white mb-1">
-              Congratulations, {bookingData.booking.studentName}!
-            </h2>
             <p className="text-gray-300 leading-tight text-sm">
               Your interview has been successfully scheduled
             </p>
@@ -121,8 +121,12 @@ const SuccessComponent = () => {
                 <h3 className="font-semibold text-gray-900 text-sm">
                   Date & Time
                 </h3>
-                <p className="text-gray-600 text-xs">{bookingData.booking.startTimeIST}</p>
-                <p className="text-gray-600 text-xs">{bookingData.booking.timezone}</p>
+                <p className="text-gray-600 text-xs">
+                  {bookingData.booking.startTimeIST}
+                </p>
+                <p className="text-gray-600 text-xs">
+                  {bookingData.booking.timezone}
+                </p>
               </div>
             </div>
 
@@ -146,7 +150,9 @@ const SuccessComponent = () => {
                 <h3 className="font-semibold text-gray-900 text-sm">
                   Interviewer
                 </h3>
-                <p className="text-gray-600 text-xs">{bookingData.interviewer.name}</p>
+                <p className="text-gray-600 text-xs">
+                  {bookingData.interviewer.name}
+                </p>
               </div>
             </div>
 
@@ -158,12 +164,14 @@ const SuccessComponent = () => {
                 <h3 className="font-semibold text-gray-900 mb-2 text-sm">
                   Google Meet
                 </h3>
-                <button 
+                <button
                   onClick={handleMeetingLinkClick}
                   className="bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg p-3 flex items-center justify-between transition-colors group cursor-pointer w-full"
                 >
                   <span className="text-gray-700 font-medium text-xs truncate">
-                    {bookingData.meetingLink ? formatMeetingLink(bookingData.meetingLink) : 'Meeting link will be shared'}
+                    {bookingData.meetingLink
+                      ? formatMeetingLink(bookingData.meetingLink)
+                      : "Meeting link will be shared"}
                   </span>
                   <ExternalLink className="w-4 h-4 text-gray-600 group-hover:scale-110 transition-transform flex-shrink-0 ml-2" />
                 </button>
@@ -172,13 +180,15 @@ const SuccessComponent = () => {
           </div>
         </div>
 
-        <div className="mt-6 text-center">
+        <div className="mt-4 text-center">
           <p className="text-xs text-gray-500 mx-10">
-            *A confirmation email has been sent to {bookingData.booking.studentEmail}
+            *A confirmation email has been sent to{" "}
+            {bookingData.booking.studentEmail}
           </p>
           {bookingData.calendarError && (
             <p className="text-xs text-orange-600 mx-10 mt-2">
-              *There was an issue with the calendar invitation. Please contact the interviewer directly.
+              *There was an issue with the calendar invitation. Please contact
+              the interviewer directly.
             </p>
           )}
         </div>
