@@ -51,11 +51,11 @@ export default function InterviewScheduler() {
       <div
         className={`${
           appointmentData && interviewFormData
-            ? "max-w-3xl"
+            ? "max-w-4xl"
             : isSlotsPane
             ? "max-w-5xl"
             : "max-w-3xl"
-        } w-full border-[0.25px] border-black rounded-xl shadow-xl sm:px-4 bg-white`}
+        } w-full border-[0.25px] border-black rounded-xl shadow-xl sm:px-2 bg-white`}
       >
         <div
           className={`grid grid-cols-1 ${

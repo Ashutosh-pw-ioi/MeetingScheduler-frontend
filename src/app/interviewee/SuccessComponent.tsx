@@ -10,15 +10,33 @@ import {
 import Lottie from "lottie-react";
 import successAnimation from "../../../public/success.json";
 
+interface BookingData {
+  message: string;
+  booking: {
+    id: string;
+    startTime: string;
+    endTime: string;
+    startTimeIST: string;
+    endTimeIST: string;
+    timezone: string;
+    studentName: string;
+    studentEmail: string;
+    studentPhone: string;
+  };
+  interviewer: {
+    name: string;
+    email: string;
+  };
+  meetingLink?: string;
+  importantNote?: string;
+  requiresInterviewerAction?: boolean;
+  calendarError?: boolean;
+}
+
 const SuccessComponent = () => {
   const [showAnimation, setShowAnimation] = useState(true);
-  const [_, setShowContent] = useState(false);
-
-  const storedForm = localStorage.getItem("interviewFormData");
-  const name =
-    storedForm && JSON.parse(storedForm).name
-      ? JSON.parse(storedForm).name
-      : "";
+  const [showContent, setShowContent] = useState(false);
+  const [bookingData, setBookingData] = useState<BookingData | null>(null);
 
   const SuccessAnimation = () => (
     <div className="w-64 h-64 flex items-center justify-center">
@@ -27,6 +45,16 @@ const SuccessComponent = () => {
   );
 
   useEffect(() => {
+    const storedBookingData = localStorage.getItem("bookingSuccess");
+    if (storedBookingData) {
+      try {
+        const parsedData = JSON.parse(storedBookingData);
+        setBookingData(parsedData);
+      } catch (error) {
+        console.error("Error parsing booking data:", error);
+      }
+    }
+
     const timer = setTimeout(() => {
       setShowAnimation(false);
       setShowContent(true);
@@ -48,17 +76,37 @@ const SuccessComponent = () => {
     );
   }
 
+  if (!bookingData) {
+    return (
+      <div className="flex items-center justify-center p-6">
+        <div className="text-center">
+          <p className="text-gray-600">Loading booking details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const formatMeetingLink = (link: string) => {
+    return link.replace(/^https?:\/\//, "");
+  };
+
+  const handleMeetingLinkClick = () => {
+    if (bookingData.meetingLink) {
+      window.open(bookingData.meetingLink, "_blank", "noopener,noreferrer");
+    }
+  };
+
   return (
     <div className="flex items-center justify-center p-6">
       <div className="max-w-md w-full">
         <div className="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden">
           <div className="bg-black p-6 text-center">
-            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-2">
-              <CircleCheck className="w-8 h-8" />
+            <div className="flex items-center justify-center gap-2">
+              <CircleCheck className="w-6 h-6 text-white" />
+              <h2 className="text-xl font-bold text-white mb-1">
+                Congratulations, {bookingData.booking.studentName}!
+              </h2>
             </div>
-            <h2 className="text-xl font-bold text-white mb-1">
-              Congratulations, {name}!
-            </h2>
             <p className="text-gray-300 leading-tight text-sm">
               Your interview has been successfully scheduled
             </p>
@@ -73,8 +121,12 @@ const SuccessComponent = () => {
                 <h3 className="font-semibold text-gray-900 text-sm">
                   Date & Time
                 </h3>
-                <p className="text-gray-600 text-xs">Monday, July 28, 2025</p>
-                <p className="text-gray-600 text-xs">10:00 AM - 10:30 AM IST</p>
+                <p className="text-gray-600 text-xs">
+                  {bookingData.booking.startTimeIST}
+                </p>
+                <p className="text-gray-600 text-xs">
+                  {bookingData.booking.timezone}
+                </p>
               </div>
             </div>
 
@@ -98,7 +150,9 @@ const SuccessComponent = () => {
                 <h3 className="font-semibold text-gray-900 text-sm">
                   Interviewer
                 </h3>
-                <p className="text-gray-600 text-xs">Dr. Sarah Johnson</p>
+                <p className="text-gray-600 text-xs">
+                  {bookingData.interviewer.name}
+                </p>
               </div>
             </div>
 
@@ -110,9 +164,14 @@ const SuccessComponent = () => {
                 <h3 className="font-semibold text-gray-900 mb-2 text-sm">
                   Google Meet
                 </h3>
-                <button className="bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg p-3 flex items-center justify-between transition-colors group cursor-pointer">
+                <button
+                  onClick={handleMeetingLinkClick}
+                  className="bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg p-3 flex items-center justify-between transition-colors group cursor-pointer w-full"
+                >
                   <span className="text-gray-700 font-medium text-xs truncate">
-                    meet.google.com/xyz-abc-def
+                    {bookingData.meetingLink
+                      ? formatMeetingLink(bookingData.meetingLink)
+                      : "Meeting link will be shared"}
                   </span>
                   <ExternalLink className="w-4 h-4 text-gray-600 group-hover:scale-110 transition-transform flex-shrink-0 ml-2" />
                 </button>
@@ -121,11 +180,26 @@ const SuccessComponent = () => {
           </div>
         </div>
 
-        <div className="mt-6 text-center">
+        <div className="mt-4 text-center">
           <p className="text-xs text-gray-500 mx-10">
-            *A confirmation email has been sent to your registered email address
+            *A confirmation email has been sent to{" "}
+            {bookingData.booking.studentEmail}
           </p>
+          {bookingData.calendarError && (
+            <p className="text-xs text-orange-600 mx-10 mt-2">
+              *There was an issue with the calendar invitation. Please contact
+              the interviewer directly.
+            </p>
+          )}
         </div>
+
+        {bookingData.importantNote && (
+          <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p className="text-xs text-yellow-800">
+              <strong>Important:</strong> {bookingData.importantNote}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
