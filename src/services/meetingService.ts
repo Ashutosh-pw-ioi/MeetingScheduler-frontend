@@ -1,5 +1,5 @@
 import { api } from '@/lib/api';
-import { CategorizedMeetings } from '../types/meeting';
+import { CategorizedMeetings, Meeting } from '../types/meeting';
 
 export class MeetingsService {
   static async getAllMeetings(): Promise<CategorizedMeetings> {

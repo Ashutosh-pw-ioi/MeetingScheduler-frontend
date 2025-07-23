@@ -14,4 +14,4 @@ export interface CategorizedMeetings {
   past: Meeting[];
 }
 
-export interface MeetingsApiResponse extends CategorizedMeetings {}
+export type MeetingsApiResponse = CategorizedMeetings;

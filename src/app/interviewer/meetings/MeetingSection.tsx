@@ -7,7 +7,7 @@ import { MeetingsService } from "../../../services/meetingService";
 import { Meeting, CategorizedMeetings } from "../../../types/meeting";
 import { AlertCircle, RefreshCw, Users, Calendar, Clock, ExternalLink } from "lucide-react";
 
-export default function MeetingsSection() {
+export default function MeetingsSection(): React.JSX.Element {
   const [meetings, setMeetings] = useState<CategorizedMeetings>({
     todays: [],
     upcoming: [],
@@ -76,7 +76,7 @@ export default function MeetingsSection() {
   };
 
   // Custom render function for meeting link
-  const renderMeetingLink = (meeting: Meeting): JSX.Element => {
+  const renderMeetingLink = (meeting: Meeting): React.JSX.Element => {
     if (!meeting.meeting_link || meeting.meeting_link === 'Not available') {
       return (
         <span className="text-gray-400 text-sm">Not available</span>
@@ -95,7 +95,7 @@ export default function MeetingsSection() {
   };
 
   // Enhanced table component that includes meeting link rendering
-  const EnhancedTable: React.FC<{ data: Meeting[] }> = ({ data }) => {
+  const EnhancedTable: React.FC<{ data: Meeting[] }> = ({ data }): React.JSX.Element => {
     if (data.length === 0) {
       return <p className="text-gray-400 italic">No meetings found</p>;
     }
@@ -204,7 +204,7 @@ export default function MeetingsSection() {
               onClick={() => setIsTodaysCollapsed(!isTodaysCollapsed)}
             >
               <h2 className="text-2xl font-semibold text-white">
-                Today&lsquo;s Meetings ({meetings.todays.length})
+                Today&apos;s Meetings ({meetings.todays.length})
               </h2>
               <span className="text-white text-xl">
                 {isTodaysCollapsed ? "▼" : "▲"}
