@@ -12,10 +12,8 @@ import {
 } from "lucide-react";
 import { AvailabilityService } from "@/services/availabilityService";
 import { AvailabilityResponse, TimeRange } from "../../../types/availabilty";
-import {
-  formatDateKey,
-  createISODateTime,
-} from "../../../lib/dateutils";
+import { formatDateKey, createISODateTime } from "../../../lib/dateUtils";
+import { se } from "date-fns/locale";
 
 interface TimeSlot {
   id: string;
@@ -368,13 +366,16 @@ export default function AddSlotsSection() {
       const displayDate = new Date(Date.UTC(year, month - 1, day));
 
       setSuccessMessage(
-        `Availability saved successfully for ${displayDate.toLocaleDateString("en-US", {
-          timeZone: "UTC",
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })}`
+        `Availability saved successfully for ${displayDate.toLocaleDateString(
+          "en-US",
+          {
+            timeZone: "UTC",
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }
+        )}`
       );
       setTimeout(() => setSuccessMessage(null), 2000);
       console.log("Availability saved successfully for", dateKey, result);
@@ -440,6 +441,7 @@ export default function AddSlotsSection() {
   };
 
   const getSelectedDates = (): Date[] => {
+    console.log(selectedDates, "Selected dates for rendering");
     return selectedDates;
   };
 
@@ -572,7 +574,12 @@ export default function AddSlotsSection() {
                     {getSelectedDates()
                       .sort((a, b) => a.getTime() - b.getTime())
                       .map((selDate, index) => {
+                        console.log(selDate, "Selected date for rendering");
                         const dateKey = formatDateKey(selDate);
+                        console.log(
+                          dateKey,
+                          "Formatted date key for rendering"
+                        );
                         const slotsForDate = dateSlots[dateKey] || [];
 
                         console.log(
@@ -592,12 +599,12 @@ export default function AddSlotsSection() {
                             <div className="flex flex-row justify-between items-start sm:items-center gap-2 sm:gap-4 mb-4">
                               <div className="text-md font-semibold text-gray-800">
                                 {selDate.toLocaleDateString("en-US", {
-                                  timeZone: "UTC",
                                   weekday: "long",
                                   year: "numeric",
                                   month: "long",
                                   day: "numeric",
                                 })}
+
                                 <span className="text-xs text-gray-500 ml-2">
                                   ({dateKey})
                                 </span>

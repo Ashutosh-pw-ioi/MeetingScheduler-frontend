@@ -2,7 +2,7 @@ export const formatDateKey = (date: Date): string => {
   // Use UTC methods to match calendar's UTC dates
   const year = date.getUTCFullYear();
   const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-  const day = date.getUTCDate().toString().padStart(2, '0');
+  const day = (date.getUTCDate() + 1).toString().padStart(2, '0');
   return `${year}-${month}-${day}`;
 };
 

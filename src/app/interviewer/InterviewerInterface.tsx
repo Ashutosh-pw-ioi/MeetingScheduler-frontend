@@ -2,91 +2,101 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { AuthService } from "@/services/authService";
+import { OverviewService } from "@/services/overviewService";
 import { CalendarStatus } from "@/types/auth";
+import { TodaySummary, WeeklyTrendsResponse, MetricData, ChartData, WeeklyTrendData } from "../../types/overview";
+import { CategorizedMeetings } from "../../types/meeting";
 import MetricCard from "../overviewComponents/MetricCard";
 import PieChartComponent from "../overviewComponents/PieChartComponent";
 import WeeklyTrendChart from "../overviewComponents/WeeklyTrendChart";
+import { AlertCircle, RefreshCw } from "lucide-react";
 
 const InterviewerInterface: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [calendarStatus, setCalendarStatus] = useState<CalendarStatus | null>(null);
   const [showCalendarSuccess, setShowCalendarSuccess] = useState<boolean>(false);
+  
+  // Data states
+  const [metrics, setMetrics] = useState<MetricData[]>([]);
+  const [meetingDistributionData, setMeetingDistributionData] = useState<ChartData[]>([]);
+  const [slotStatusData, setSlotStatusData] = useState<ChartData[]>([]);
+  const [weeklyTrendsData, setWeeklyTrendsData] = useState<WeeklyTrendData[]>([]);
+  
   const hasInitialized = useRef(false);
   const successTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const metrics = [
-    {
-      title: "Total Meetings",
-      value: 48,
-      subtitle: "Scheduled interviews",
-    },
-    {
-      title: "Total Slots Created",
-      value: 72,
-      subtitle: "Available time slots",
-    },
-    {
-      title: "Available Slots",
-      value: 24,
-      subtitle: "Remaining open slots",
-    },
-    {
-      title: "Booking Rate",
-      value: "67%",
-      subtitle: "Slots filled rate",
-    },
-  ];
+  const loadOverviewData = async (): Promise<void> => {
+    try {
+      setError(null);
+      console.log('Loading overview data...');
+      
+      // Fetch all data in parallel
+      const [todaySummary, weeklyTrends, allMeetings] = await Promise.all([
+        OverviewService.getTodaySummary(),
+        OverviewService.getWeeklyTrends(),
+        OverviewService.getAllMeetings(),
+      ]);
 
-  const meetingDistributionData = [
-    { name: "Past", value: 12 },
-    { name: "Today", value: 8 },
-    { name: "Upcoming", value: 28 },
-  ];
+      console.log('All overview data fetched:', { todaySummary, weeklyTrends, allMeetings });
 
-  const slotStatusData = [
-    { name: "Booked", value: 48 },
-    { name: "Available", value: 24 },
-  ];
+      // Calculate metrics from today's summary
+      const calculatedMetrics = OverviewService.calculateMetrics(todaySummary);
+      setMetrics(calculatedMetrics);
 
-  const weeklyTrendsData = [
-    { day: "Mon", interviews: 6 },
-    { day: "Tue", interviews: 8 },
-    { day: "Wed", interviews: 5 },
-    { day: "Thu", interviews: 9 },
-    { day: "Fri", interviews: 7 },
-    { day: "Sat", interviews: 3 },
-    { day: "Sun", interviews: 2 },
-  ];
+      // Calculate meeting distribution from all meetings
+      const meetingDistribution = OverviewService.calculateMeetingDistribution(allMeetings);
+      setMeetingDistributionData(meetingDistribution);
+
+      // Calculate slot status from today's summary
+      const slotStatus = OverviewService.calculateSlotStatus(todaySummary);
+      setSlotStatusData(slotStatus);
+
+      // Set weekly trends data
+      setWeeklyTrendsData(weeklyTrends.weeklyTrends);
+
+      console.log('Overview data processed and set to state');
+
+    } catch (error) {
+      console.error('Failed to load overview data:', error);
+      setError('Failed to load dashboard data. Please try again.');
+    }
+  };
+
+  const initializeData = async (): Promise<void> => {
+    try {
+      setLoading(true);
+      
+      // Check calendar status
+      const calendarData = await AuthService.checkCalendarStatus();
+      console.log('Calendar status:', calendarData);
+      setCalendarStatus(calendarData);
+
+      // Show success message if calendar is connected
+      if (calendarData && calendarData.hasCalendarAccess) {
+        setShowCalendarSuccess(true);
+        successTimeoutRef.current = setTimeout(() => {
+          setShowCalendarSuccess(false);
+        }, 3000); // Hide after 3 seconds
+      }
+
+      // Load overview data
+      await loadOverviewData();
+
+    } catch (err) {
+      console.error('Failed to initialize data:', err);
+      setError('Failed to load dashboard data');
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
   useEffect(() => {
     // Prevent multiple initializations
     if (hasInitialized.current) return;
     hasInitialized.current = true;
-
-    const initializeData = async (): Promise<void> => {
-      console.log('Initializing dashboard data...');
-      try {
-        // Authentication is already handled by layout, so just check calendar status
-        const calendarData = await AuthService.checkCalendarStatus();
-        console.log('Calendar status:', calendarData);
-        setCalendarStatus(calendarData);
-
-        // Show success message if calendar is connected
-        if (calendarData && calendarData.hasCalendarAccess) {
-          setShowCalendarSuccess(true);
-          successTimeoutRef.current = setTimeout(() => {
-            setShowCalendarSuccess(false);
-          }, 3000); // Hide after 3 seconds
-        }
-
-        setLoading(false);
-      } catch (err) {
-        console.error('Failed to initialize data:', err);
-        setError('Failed to load dashboard data');
-        setLoading(false);
-      }
-    };
 
     initializeData();
   }, []); // Empty dependency array
@@ -100,6 +110,12 @@ const InterviewerInterface: React.FC = () => {
     };
   }, []);
 
+  const handleRefresh = async (): Promise<void> => {
+    setRefreshing(true);
+    await loadOverviewData();
+    setRefreshing(false);
+  };
+
   const handleConnectCalendar = (): void => {
     const calendarAuthUrl = AuthService.getCalendarAuthUrl();
     window.location.href = calendarAuthUrl;
@@ -109,8 +125,7 @@ const InterviewerInterface: React.FC = () => {
     setError(null);
     setLoading(true);
     hasInitialized.current = false;
-    // Trigger re-initialization
-    window.location.reload();
+    initializeData();
   };
 
   const handleDismissSuccess = (): void => {
@@ -175,8 +190,34 @@ const InterviewerInterface: React.FC = () => {
                 Track your interview slots and meeting insights
               </p>
             </div>
+            <button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors disabled:opacity-50"
+            >
+              <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+              <span className="text-sm">Refresh</span>
+            </button>
           </div>
         </div>
+
+        {/* Error Banner */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <AlertCircle className="w-5 h-5 text-red-600 mr-2" />
+                <p className="text-red-800 text-sm">{error}</p>
+              </div>
+              <button
+                onClick={handleRetry}
+                className="text-red-600 hover:text-red-800"
+              >
+                <RefreshCw className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Calendar Connection Status - Warning for not connected */}
         {calendarStatus && !calendarStatus.hasCalendarAccess && (
