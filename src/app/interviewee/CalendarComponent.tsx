@@ -13,7 +13,7 @@ export default function CalendarComponent({
   multiSelect = false,
 }: CalendarComponentProps) {
   const [singleDate, setSingleDate] = React.useState<Date | undefined>(
-    new Date()
+    undefined
   );
   const [multiDates, setMultiDates] = React.useState<Date[] | undefined>(
     undefined
