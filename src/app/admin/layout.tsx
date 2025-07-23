@@ -1,0 +1,175 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import {
+  User,
+  GraduationCap,
+  HelpCircle,
+  Menu,
+  X,
+  ChartPie,
+} from "lucide-react";
+import Image from "next/image";
+
+const StudentLayout = ({ children }: { children: React.ReactNode }) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const menuItems = [
+    {
+      id: "overview",
+      label: "Overview",
+      icon: ChartPie,
+      href: "/admin",
+    },
+    {
+      id: "interviewers",
+      label: "Interviewers",
+      icon: User,
+      href: "/admin/interviewers",
+    },
+    {
+      id: "interviewees",
+      label: "Interviewees",
+      icon: GraduationCap,
+      href: "/admin/interviewees",
+    },
+    {
+      id: "help",
+      label: "Help",
+      icon: HelpCircle,
+      href: "/admin/help",
+    },
+  ];
+
+  const getActiveSection = () => {
+    if (pathname.includes("/interviewers")) return "interviewers";
+    if (pathname.includes("/interviewees")) return "interviewees";
+    if (pathname.includes("/help")) return "help";
+    return "overview";
+  };
+
+  const activeSection = getActiveSection();
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const sidebar = document.getElementById("mobile-sidebar");
+      const menuButton = document.getElementById("mobile-menu-button");
+
+      if (
+        isMobileMenuOpen &&
+        sidebar &&
+        !sidebar.contains(event.target as Node) &&
+        menuButton &&
+        !menuButton.contains(event.target as Node)
+      ) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isMobileMenuOpen]);
+
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isMobileMenuOpen]);
+
+  const handleLogout = () => {
+    console.log("Logout clicked");
+    // Add any logout logic here (clear tokens, etc.)
+    router.push("/auth/login/student");
+  };
+
+  const handleNavigation = (href: string) => {
+    router.push(href);
+    setIsMobileMenuOpen(false); // Close mobile menu after navigation
+  };
+
+  return (
+    <div className="flex min-h-screen">
+      {/* Mobile Menu Button */}
+      <button
+        id="mobile-menu-button"
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        className="lg:hidden fixed top-4 right-4 z-50 p-2 bg-[#1B3A6A] text-white rounded-lg shadow-lg hover:bg-[#2A4A7A] transition-colors duration-200 md:mr-2 scale-[0.8] md:scale-[1] mt-1 md:mt-0"
+        aria-label="Toggle menu"
+      >
+        {isMobileMenuOpen ? (
+          <X className="w-6 h-6" />
+        ) : (
+          <Menu className="w-6 h-6" />
+        )}
+      </button>
+
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40 transition-opacity duration-300"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div
+        id="mobile-sidebar"
+        className={`fixed lg:sticky inset-y-0 right-0 lg:left-0 z-40 w-64 h-screen 
+          bg-white backdrop-blur-md border-l lg:border-l-0 lg:border-r border-white/20 
+          flex flex-col transition-transform duration-300 ease-in-out border-r-[0.25px] border-r-black/25 drop-shadow-2xl
+          ${
+            isMobileMenuOpen
+              ? "translate-x-0"
+              : "translate-x-full lg:translate-x-0"
+          }`}
+      >
+        {/* Logo Section */}
+        <div className="p-6 border-b border-white/20 bg-[#D9A864] md:bg-transparent mb-4 md:mb-0">
+          <Image
+            src="/PWIOILogo.png"
+            alt="PW IOI Logo"
+            width={160}
+            height={0}
+          />
+        </div>
+
+        <nav className="flex-1 p-4 space-y-2">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeSection === item.id;
+
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleNavigation(item.href)}
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-md 
+                  transition-all duration-200 ease-in-out cursor-pointer text-left
+                  ${
+                    isActive
+                      ? "bg-black text-white shadow-md transform scale-[1.01]"
+                      : "hover:bg-gray-200 hover:transform hover:scale-[1.01] text-gray-700"
+                  }`}
+              >
+                <Icon className="w-5 h-5 flex-shrink-0" />
+                <span className="font-medium">{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+      </div>
+
+      <div className="flex-1 p-6 bg-gray-100 lg:ml-0">{children}</div>
+    </div>
+  );
+};
+
+export default StudentLayout;
