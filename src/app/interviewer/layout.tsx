@@ -8,7 +8,6 @@ import Image from "next/image";
 const StudentLayout = ({ children }: { children: React.ReactNode }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
-  const router = useRouter();
 
   const menuItems = [
     {
@@ -83,7 +82,7 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
       <button
         id="mobile-menu-button"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="lg:hidden fixed top-4 right-4 z-50 p-2 bg-[#1B3A6A] text-white rounded-lg shadow-lg hover:bg-[#2A4A7A] transition-colors duration-200 md:mr-2 scale-[0.8] md:scale-[1] mt-1 md:mt-0"
+        className="lg:hidden fixed top-4 right-4 z-50 p-2 bg-black text-white rounded-lg shadow-lg  transition-colors duration-200 md:mr-2 scale-[0.8] md:scale-[1] mt-1 md:mt-0"
         aria-label="Toggle menu"
       >
         {isMobileMenuOpen ? (
@@ -111,7 +110,7 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
               : "translate-x-full lg:translate-x-0"
           }`}
       >
-        <div className="p-6 border-b border-white/20 bg-[#D9A864] md:bg-transparent mb-4 md:mb-0">
+        <div className="p-6 pb-4 sm:pb-6 border-b border-white/20 md:bg-transparent md:mb-0">
           <Image
             src="/PWIOILogo.png"
             alt="PW IOI Logo"
@@ -120,7 +119,7 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
           />
         </div>
 
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4 space-y-2 border-t-2 sm:border-t-0 border-black/25">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeSection === item.id;
