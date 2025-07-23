@@ -1,21 +1,20 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
-  User,
-  GraduationCap,
   HelpCircle,
   Menu,
   X,
   ChartPie,
+  User,
+  GraduationCap,
 } from "lucide-react";
 import Image from "next/image";
 
 const StudentLayout = ({ children }: { children: React.ReactNode }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
-  const router = useRouter();
 
   const menuItems = [
     {
@@ -85,24 +84,12 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
     };
   }, [isMobileMenuOpen]);
 
-  const handleLogout = () => {
-    console.log("Logout clicked");
-    // Add any logout logic here (clear tokens, etc.)
-    router.push("/auth/login/student");
-  };
-
-  const handleNavigation = (href: string) => {
-    router.push(href);
-    setIsMobileMenuOpen(false); // Close mobile menu after navigation
-  };
-
   return (
     <div className="flex min-h-screen">
-      {/* Mobile Menu Button */}
       <button
         id="mobile-menu-button"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        className="lg:hidden fixed top-4 right-4 z-50 p-2 bg-[#1B3A6A] text-white rounded-lg shadow-lg hover:bg-[#2A4A7A] transition-colors duration-200 md:mr-2 scale-[0.8] md:scale-[1] mt-1 md:mt-0"
+        className="lg:hidden fixed top-4 right-4 z-50 p-2 bg-black text-white rounded-lg shadow-lg  transition-colors duration-200 md:mr-2 scale-[0.8] md:scale-[1] mt-1 md:mt-0"
         aria-label="Toggle menu"
       >
         {isMobileMenuOpen ? (
@@ -112,7 +99,6 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
         )}
       </button>
 
-      {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div
           className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40 transition-opacity duration-300"
@@ -120,7 +106,6 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
         />
       )}
 
-      {/* Sidebar */}
       <div
         id="mobile-sidebar"
         className={`fixed lg:sticky inset-y-0 right-0 lg:left-0 z-40 w-64 h-screen 
@@ -132,8 +117,7 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
               : "translate-x-full lg:translate-x-0"
           }`}
       >
-        {/* Logo Section */}
-        <div className="p-6 border-b border-white/20 bg-[#D9A864] md:bg-transparent mb-4 md:mb-0">
+        <div className="p-6 pb-4 sm:pb-6 border-b border-white/20 md:bg-transparent md:mb-0">
           <Image
             src="/PWIOILogo.png"
             alt="PW IOI Logo"
@@ -142,32 +126,32 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
           />
         </div>
 
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4 space-y-2 border-t-2 sm:border-t-0 border-black/25">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeSection === item.id;
 
             return (
-              <button
+              <a
                 key={item.id}
-                onClick={() => handleNavigation(item.href)}
+                href={item.href}
                 className={`w-full flex items-center space-x-3 px-4 py-3 rounded-md 
-                  transition-all duration-200 ease-in-out cursor-pointer text-left
+                  transition-all duration-200 ease-in-out cursor-pointer
                   ${
                     isActive
                       ? "bg-black text-white shadow-md transform scale-[1.01]"
-                      : "hover:bg-gray-200 hover:transform hover:scale-[1.01] text-gray-700"
+                      : "hover:bg-gray-200 hover:transform hover:scale-[1.01]"
                   }`}
               >
                 <Icon className="w-5 h-5 flex-shrink-0" />
                 <span className="font-medium">{item.label}</span>
-              </button>
+              </a>
             );
           })}
         </nav>
       </div>
 
-      <div className="flex-1 p-6 bg-gray-100 lg:ml-0">{children}</div>
+      <div className="flex-1 p-6 bg-gray-50 lg:ml-0">{children}</div>
     </div>
   );
 };
