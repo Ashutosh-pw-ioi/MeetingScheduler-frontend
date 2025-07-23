@@ -1,27 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { X, Calendar, Clock, AlertCircle } from "lucide-react";
-
-interface FormData {
-  name: string;
-  email: string;
-  phone: string;
-}
-
-interface ConfirmationModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  selectedDate: string;
-  selectedTime: string;
-  formData: FormData;
-  onFormDataChange: (formData: FormData) => void;
-}
-
-interface FormErrors {
-  name: string;
-  email: string;
-  phone: string;
-}
+import { ConfirmationModalProps, FormData } from "../../types/booking";
+import { useBookingForm } from "../../hooks/useBookingForm";
+import { getFieldMessage } from "../../utils/validation";
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   isOpen,
@@ -32,36 +13,20 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   formData,
   onFormDataChange,
 }) => {
-  const [errors, setErrors] = useState<FormErrors>({
-    name: "",
-    email: "",
-    phone: "",
-  });
-
-  const [touched, setTouched] = useState({
-    name: false,
-    email: false,
-    phone: false,
-  });
-
-  useEffect(() => {
-    if (isOpen) {
-      setTouched({
-        name: false,
-        email: false,
-        phone: false,
-      });
-      setErrors({
-        name: "",
-        email: "",
-        phone: "",
-      });
-    }
-  }, [isOpen]);
+  const {
+    errors,
+    touched,
+    isBooking,
+    bookingError,
+    handleInputChange,
+    handleBlur,
+    handleBookingConfirm,
+    isFormValid,
+  } = useBookingForm(isOpen, formData, onFormDataChange, onConfirm, onClose);
 
   if (!isOpen) return null;
 
-  const formatDate = (dateStr: string) => {
+  const formatDate = (dateStr: string): string => {
     const date = new Date(dateStr);
     return date.toLocaleDateString("en-US", {
       weekday: "long",
@@ -71,83 +36,14 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     });
   };
 
-  const validateField = (field: string, value: string): string => {
-    switch (field) {
-      case "name":
-        if (!value.trim()) return "Full name is required";
-        if (value.trim().length < 2)
-          return "Name must be at least 2 characters";
-        if (!/^[a-zA-Z\s'-]+$/.test(value))
-          return "Name can only contain letters, spaces, hyphens and apostrophes";
-        return "";
-
-      case "email":
-        if (!value.trim()) return "Email address is required";
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(value))
-          return "Please enter a valid email address";
-        return "";
-
-      case "phone":
-        if (!value.trim()) return "Phone number is required";
-        const phoneRegex = /^[\+]?[\d\s\-\(\)]{10,}$/;
-        if (!phoneRegex.test(value)) return "Please enter a valid phone number";
-        return "";
-
-      default:
-        return "";
-    }
-  };
-
-  const handleInputChange = (field: string, value: string) => {
-    const updatedFormData = {
-      ...formData,
-      [field]: value,
+  const handleFieldChange =
+    (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleInputChange(field, e.target.value);
     };
 
-    onFormDataChange(updatedFormData);
-
-    if (!touched[field as keyof typeof touched]) {
-      setTouched((prev) => ({
-        ...prev,
-        [field]: true,
-      }));
-    }
-
-    const error = validateField(field, value);
-    setErrors((prev) => ({
-      ...prev,
-      [field]: error,
-    }));
+  const handleFieldBlur = (field: keyof FormData) => () => {
+    handleBlur(field);
   };
-
-  const handleBlur = (field: string) => {
-    setTouched((prev) => ({
-      ...prev,
-      [field]: true,
-    }));
-  };
-
-  const getFieldMessage = (field: keyof FormErrors) => {
-    if (!touched[field]) {
-      if (field === "name" && !formData.name)
-        return { text: "Please enter your full name", type: "hint" };
-      if (field === "email" && !formData.email)
-        return { text: "Please enter your email address", type: "hint" };
-    }
-    if (errors[field]) {
-      return { text: errors[field], type: "error" };
-    }
-    return null;
-  };
-
-  const isFormValid =
-    formData.name.trim() !== "" &&
-    formData.email.trim() !== "" &&
-    formData.phone.trim() !== "" &&
-    errors.name === "" &&
-    errors.email === "" &&
-    errors.phone === "";
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-lg flex items-center justify-center z-50 p-2 sm:p-4">
@@ -158,7 +54,9 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           </h2>
           <button
             onClick={onClose}
-            className="text-gray-600 hover:text-black transition-colors cursor-pointer p-1"
+            disabled={isBooking}
+            className="text-gray-600 hover:text-black transition-colors cursor-pointer p-1 disabled:opacity-50 disabled:cursor-not-allowed"
+            type="button"
           >
             <X size={20} />
           </button>
@@ -171,6 +69,18 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                 Your Information
               </h3>
 
+              {bookingError && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                  <div className="flex items-start">
+                    <AlertCircle
+                      size={16}
+                      className="text-red-500 mr-2 mt-0.5 flex-shrink-0"
+                    />
+                    <p className="text-red-700 text-sm">{bookingError}</p>
+                  </div>
+                </div>
+              )}
+
               <div className="space-y-4 sm:space-y-5 max-w-sm">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -179,32 +89,44 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                   <input
                     type="text"
                     value={formData.name}
-                    onChange={(e) => handleInputChange("name", e.target.value)}
-                    onBlur={() => handleBlur("name")}
+                    onChange={handleFieldChange("name")}
+                    onBlur={handleFieldBlur("name")}
                     placeholder="Enter your full name"
-                    className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-md transition-colors focus:outline-none text-base ${
-                      getFieldMessage("name")?.type === "error"
+                    disabled={isBooking}
+                    className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-md transition-colors focus:outline-none text-base disabled:opacity-50 disabled:cursor-not-allowed ${
+                      getFieldMessage("name", touched, errors, formData)
+                        ?.type === "error"
                         ? "border-red-500 focus:border-red-500"
                         : "border-gray-300 focus:border-black"
                     }`}
                   />
-                  {getFieldMessage("name") && (
-                    <div
-                      className={`flex items-start mt-2 text-sm ${
-                        getFieldMessage("name")?.type === "error"
-                          ? "text-red-600"
-                          : "text-gray-600"
-                      }`}
-                    >
-                      {getFieldMessage("name")?.type === "error" && (
-                        <AlertCircle
-                          size={14}
-                          className="mr-1 mt-0.5 flex-shrink-0"
-                        />
-                      )}
-                      <span>{getFieldMessage("name")?.text}</span>
-                    </div>
-                  )}
+                  {(() => {
+                    const message = getFieldMessage(
+                      "name",
+                      touched,
+                      errors,
+                      formData
+                    );
+                    return (
+                      message && (
+                        <div
+                          className={`flex items-start mt-2 text-sm ${
+                            message.type === "error"
+                              ? "text-red-600"
+                              : "text-gray-600"
+                          }`}
+                        >
+                          {message.type === "error" && (
+                            <AlertCircle
+                              size={14}
+                              className="mr-1 mt-0.5 flex-shrink-0"
+                            />
+                          )}
+                          <span>{message.text}</span>
+                        </div>
+                      )
+                    );
+                  })()}
                 </div>
 
                 <div>
@@ -214,32 +136,44 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                   <input
                     type="email"
                     value={formData.email}
-                    onChange={(e) => handleInputChange("email", e.target.value)}
-                    onBlur={() => handleBlur("email")}
+                    onChange={handleFieldChange("email")}
+                    onBlur={handleFieldBlur("email")}
                     placeholder="your.email@example.com"
-                    className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-md transition-colors focus:outline-none text-base ${
-                      getFieldMessage("email")?.type === "error"
+                    disabled={isBooking}
+                    className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-md transition-colors focus:outline-none text-base disabled:opacity-50 disabled:cursor-not-allowed ${
+                      getFieldMessage("email", touched, errors, formData)
+                        ?.type === "error"
                         ? "border-red-500 focus:border-red-500"
                         : "border-gray-300 focus:border-black"
                     }`}
                   />
-                  {getFieldMessage("email") && (
-                    <div
-                      className={`flex items-start mt-2 text-sm ${
-                        getFieldMessage("email")?.type === "error"
-                          ? "text-red-600"
-                          : "text-gray-600"
-                      }`}
-                    >
-                      {getFieldMessage("email")?.type === "error" && (
-                        <AlertCircle
-                          size={14}
-                          className="mr-1 mt-0.5 flex-shrink-0"
-                        />
-                      )}
-                      <span>{getFieldMessage("email")?.text}</span>
-                    </div>
-                  )}
+                  {(() => {
+                    const message = getFieldMessage(
+                      "email",
+                      touched,
+                      errors,
+                      formData
+                    );
+                    return (
+                      message && (
+                        <div
+                          className={`flex items-start mt-2 text-sm ${
+                            message.type === "error"
+                              ? "text-red-600"
+                              : "text-gray-600"
+                          }`}
+                        >
+                          {message.type === "error" && (
+                            <AlertCircle
+                              size={14}
+                              className="mr-1 mt-0.5 flex-shrink-0"
+                            />
+                          )}
+                          <span>{message.text}</span>
+                        </div>
+                      )
+                    );
+                  })()}
                 </div>
 
                 <div>
@@ -249,10 +183,11 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                   <input
                     type="tel"
                     value={formData.phone}
-                    onChange={(e) => handleInputChange("phone", e.target.value)}
-                    onBlur={() => handleBlur("phone")}
+                    onChange={handleFieldChange("phone")}
+                    onBlur={handleFieldBlur("phone")}
                     placeholder="+91 12345-67890"
-                    className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-md transition-colors focus:outline-none text-base ${
+                    disabled={isBooking}
+                    className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-md transition-colors focus:outline-none text-base disabled:opacity-50 disabled:cursor-not-allowed ${
                       touched.phone && errors.phone
                         ? "border-red-500 focus:border-red-500"
                         : "border-gray-300 focus:border-black"
@@ -333,20 +268,23 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         <div className="flex flex-col sm:flex-row gap-3 p-4 sm:p-6 border-t border-gray-200 bg-gray-50 flex-shrink-0">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-3 text-black bg-white border-2 border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-100 ease-in-out font-medium cursor-pointer text-sm sm:text-base"
+            disabled={isBooking}
+            type="button"
+            className="flex-1 px-4 py-3 text-black bg-white border-2 border-gray-300 rounded-md hover:bg-gray-50 transition-colors duration-100 ease-in-out font-medium cursor-pointer text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>
           <button
-            onClick={onConfirm}
-            disabled={!isFormValid}
+            onClick={handleBookingConfirm}
+            disabled={!isFormValid || isBooking}
+            type="button"
             className={`flex-1 px-4 py-3 rounded-md transition-colors font-medium duration-100 ease-in-out text-sm sm:text-base ${
-              isFormValid
+              isFormValid && !isBooking
                 ? "bg-black text-white hover:bg-gray-950 cursor-pointer"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
             }`}
           >
-            Confirm Interview
+            {isBooking ? "Booking..." : "Confirm Interview"}
           </button>
         </div>
       </div>
