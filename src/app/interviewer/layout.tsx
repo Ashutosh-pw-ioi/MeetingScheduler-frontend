@@ -1,13 +1,19 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { HelpCircle, Menu, X, ChartPie, CirclePlus, Video } from "lucide-react";
+import { HelpCircle, Menu, X, ChartPie, CirclePlus, Video, LogOut } from "lucide-react";
 import Image from "next/image";
+import { AuthService } from "@/services/authService";
+import { User } from "@/types/auth";
 
 const StudentLayout = ({ children }: { children: React.ReactNode }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAuthenticating, setIsAuthenticating] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
   const pathname = usePathname();
+  const router = useRouter();
+  const hasCheckedAuth = useRef(false);
 
   const menuItems = [
     {
@@ -36,7 +42,7 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
     },
   ];
 
-  const getActiveSection = () => {
+  const getActiveSection = (): string => {
     if (pathname.includes("/addslots")) return "addslots";
     if (pathname.includes("/meetings")) return "meetings";
     if (pathname.includes("/help")) return "help";
@@ -44,6 +50,37 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
   };
 
   const activeSection = getActiveSection();
+
+  // Authentication check
+  useEffect(() => {
+    if (hasCheckedAuth.current) return;
+    hasCheckedAuth.current = true;
+
+    const checkAuthentication = async (): Promise<void> => {
+      console.log('Checking authentication in layout...');
+      try {
+        const userData = await AuthService.checkAuth();
+        if (!userData) {
+          console.log('User not authenticated, redirecting to login...');
+          router.replace('/auth/login/interviewer');
+          return;
+        }
+        console.log('User authenticated in layout:', userData);
+        setUser(userData);
+        setIsAuthenticating(false);
+      } catch (error) {
+        console.error('Authentication check failed:', error);
+        router.replace('/auth/login/interviewer');
+      }
+    };
+
+    checkAuthentication();
+  }, []); // Empty dependency array to run only once
+
+  const handleLogout = (): void => {
+    const logoutUrl = AuthService.getLogoutUrl();
+    window.location.href = logoutUrl;
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -76,6 +113,23 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
       document.body.style.overflow = "unset";
     };
   }, [isMobileMenuOpen]);
+
+  // Show loading while authenticating
+  if (isAuthenticating) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+          <p className="text-gray-600">Verifying authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render children if user is not authenticated
+  if (!user) {
+    return null;
+  }
 
   return (
     <div className="flex min-h-screen">
@@ -117,6 +171,28 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
             width={160}
             height={0}
           />
+          {/* User info */}
+          {user && (
+            <div className="mt-3 pt-3 border-t border-gray-200">
+              <div className="flex items-center space-x-2">
+                {user.avatarUrl && (
+                  <img
+                    src={user.avatarUrl}
+                    alt="User Avatar"
+                    className="w-8 h-8 rounded-full"
+                  />
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900 truncate">
+                    {user.name}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate">
+                    {user.email}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <nav className="flex-1 p-4 space-y-2 border-t-2 sm:border-t-0 border-black/25">
@@ -142,6 +218,19 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
             );
           })}
         </nav>
+
+        {/* Logout button at the bottom */}
+        <div className="p-4 border-t border-white/20">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center space-x-3 px-4 py-3 rounded-md 
+              hover:bg-red-50 hover:text-red-600 transition-all duration-200 ease-in-out cursor-pointer
+              text-gray-700"
+          >
+            <LogOut className="w-5 h-5 flex-shrink-0" />
+            <span className="font-medium">Logout</span>
+          </button>
+        </div>
       </div>
 
       <div className="flex-1 p-6 bg-gray-50 lg:ml-0">{children}</div>
