@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import InterviewerInterface from "./AdminInterface";
 
 export const metadata: Metadata = {
-  title: "Add Slots",
-  description: "Interviewers can add their available slots",
+  title: "Overview",
+  description: "Interviewers and Interviewees Data Overview",
 };
 
 export default function Page() {
