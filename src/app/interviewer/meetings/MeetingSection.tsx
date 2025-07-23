@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { meetings as InitialMeetings } from "../constants/MeetingsData";
 import SimpleTable from "../../Table/SimpleTable";
-import EmptyList from "./EmptyList";
+import EmptyList from "../EmptyList";
 
 type Meeting = {
   id: number;

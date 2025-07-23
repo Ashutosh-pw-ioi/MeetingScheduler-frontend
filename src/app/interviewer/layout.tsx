@@ -21,19 +21,19 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
       id: "addslots",
       label: "Add Slots",
       icon: CirclePlus,
-      href: "interviewer/addslots",
+      href: "/interviewer/addslots",
     },
     {
       id: "meetings",
       label: "Meetings",
       icon: Video,
-      href: "interviewer/meetings",
+      href: "/interviewer/meetings",
     },
     {
       id: "help",
       label: "Help",
       icon: HelpCircle,
-      href: "interviewer/help",
+      href: "/interviewer/help",
     },
   ];
 
