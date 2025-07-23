@@ -1,39 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import { interviewersData } from "../constants/InterviewersData";
 import EmptyList from "@/app/interviewer/EmptyList";
 import SimpleTable from "../../Table/SimpleTable";
 import { CalendarOff } from "lucide-react";
+import { useInterviewerData } from "../../../hooks/useInterviewerData";
+import { Interviewer, InterviewerTableData } from "../../../types/adminInterviewer";
 
-interface Meeting {
-  intervieweeName: string;
-  intervieweeEmail: string;
-  date: string;
-  time: string;
-  meetingLink: string;
-}
-
-interface Interviewer {
-  id: number;
-  name: string;
-  email: string;
-  totalSlots: number;
-  bookedSlots: number;
-  availableSlots: number;
-  meetings: Meeting[];
-}
-
-interface InterviewerTableData {
-  id: number;
-  name: string;
-  email: string;
-  totalSlots: number;
-  bookedSlots: number;
-  availableSlots: number;
-  meetings: string;
-}
-
+// MeetingsModal Component (Kept inside InterviewersSection)
 function MeetingsModal({
   interviewer,
   isOpen,
@@ -150,7 +124,9 @@ function MeetingsModal({
           </div>
         ) : (
           <div className="text-center py-12 text-gray-500">
-            <div className="text-6xl mb-4 flex justify-center w-full"><CalendarOff className="w-20 h-20"/></div>
+            <div className="text-6xl mb-4 flex justify-center w-full">
+              <CalendarOff className="w-20 h-20"/>
+            </div>
             <h3 className="text-lg font-medium mb-2">No meetings scheduled</h3>
             <p className="text-sm">
               This interviewer doesn't have any upcoming meetings.
@@ -162,20 +138,11 @@ function MeetingsModal({
   );
 }
 
+// Main InterviewersSection Component
 export default function InterviewersSection() {
-  const [selectedInterviewer, setSelectedInterviewer] =
-    useState<Interviewer | null>(null);
+  const { interviewersData, tableData, loading, error, refetch } = useInterviewerData();
+  const [selectedInterviewer, setSelectedInterviewer] = useState<Interviewer | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const tableData: InterviewerTableData[] = interviewersData.map((int) => ({
-    id: int.id,
-    name: int.name,
-    email: int.email,
-    totalSlots: int.totalSlots,
-    bookedSlots: int.bookedSlots,
-    availableSlots: int.availableSlots,
-    meetings: `View (${int.meetings.length})`,
-  }));
 
   const handleViewMeetings = (row: InterviewerTableData) => {
     const fullData = interviewersData.find((d) => d.id === row.id);
@@ -205,6 +172,41 @@ export default function InterviewersSection() {
       document.body.style.overflow = "unset";
     };
   }, [isModalOpen]);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="p-4 relative">
+        <div className="text-3xl font-bold mb-8">Interviewers Management</div>
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading interviewers...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="p-4 relative">
+        <div className="text-3xl font-bold mb-8">Interviewers Management</div>
+        <div className="flex items-center justify-center py-12">
+          <div className="text-center">
+            <p className="text-red-600 mb-4">{error}</p>
+            <button
+              onClick={refetch}
+              className="bg-gray-900 hover:bg-gray-800 text-white px-6 py-2 rounded-xl"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 relative">

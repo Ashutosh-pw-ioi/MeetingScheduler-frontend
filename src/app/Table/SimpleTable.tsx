@@ -1,3 +1,4 @@
+// Table/SimpleTable.tsx - Update the columns generation logic
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
@@ -30,10 +31,14 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
 }) => {
   const columns = useMemo(() => {
     if (data.length === 0) return [];
-    return Object.keys(data[0]).map((key) => ({
-      key,
-      label: key.charAt(0).toUpperCase() + key.slice(1),
-    }));
+    
+    // Generate columns but replace 'id' with 'displayId' and hide actual 'id'
+    return Object.keys(data[0])
+      .filter(key => key !== 'id') // Hide the UUID id field
+      .map((key) => ({
+        key: key === 'displayId' ? 'displayId' : key,
+        label: key === 'displayId' ? 'ID' : key.charAt(0).toUpperCase() + key.slice(1),
+      }));
   }, [data]);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -115,7 +120,7 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
           </thead>
           <tbody className="divide-y divide-gray-200">
             {currentData.map((item, idx) => (
-              <tr key={idx} className="hover:bg-gray-50 transition">
+              <tr key={item.id || idx} className="hover:bg-gray-50 transition">
                 {columns.map((column) => (
                   <td
                     key={column.key}
