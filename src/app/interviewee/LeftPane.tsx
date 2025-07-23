@@ -51,7 +51,7 @@ export default function LeftPane({}) {
           <span className="font-medium text-sm">Choose a preferred date</span>
         </div>
         <div className="flex items-center">
-          <div className="w-7 h-7 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-sm font-bold mr-3">
+          <div className="w-7 h-7 bg-black text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">
             2
           </div>
           <span className="font-medium text-gray-500 text-sm">
@@ -59,7 +59,7 @@ export default function LeftPane({}) {
           </span>
         </div>
         <div className="flex items-center">
-          <div className="w-7 h-7 bg-gray-200 text-gray-600 rounded-full flex items-center justify-center text-sm font-bold mr-3">
+          <div className="w-7 h-7 bg-black text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">
             3
           </div>
           <span className="font-medium text-gray-500 text-sm">
