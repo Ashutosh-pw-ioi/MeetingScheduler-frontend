@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { HelpCircle, Menu, X, ChartPie, CirclePlus, Video } from "lucide-react";
 import Image from "next/image";
 

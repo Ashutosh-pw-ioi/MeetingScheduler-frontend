@@ -151,7 +151,7 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
             <button
               disabled={currentPage === 1}
               onClick={() => setCurrentPage((prev) => prev - 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer bg-[#1B3A6A] text-white"
+              className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer bg-black text-white"
             >
               Previous
             </button>
@@ -160,7 +160,7 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
                 currentPage === Math.ceil(filteredData.length / itemsPerPage)
               }
               onClick={() => setCurrentPage((prev) => prev + 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer bg-[#1B3A6A] text-white"
+              className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer bg-black text-white"
             >
               Next
             </button>
