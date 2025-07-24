@@ -35,7 +35,7 @@ interface BookingData {
 
 const SuccessComponent = () => {
   const [showAnimation, setShowAnimation] = useState(true);
-  const [showContent, setShowContent] = useState(false);
+  const [_showContent, setShowContent] = useState(false);
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
 
   const SuccessAnimation = () => (

@@ -13,7 +13,6 @@ import {
 import { AvailabilityService } from "@/services/availabilityService";
 import { AvailabilityResponse, TimeRange } from "../../../types/availabilty";
 import { formatDateKey, createISODateTime } from "../../../lib/dateUtils";
-import { se } from "date-fns/locale";
 
 interface TimeSlot {
   id: string;
@@ -189,11 +188,6 @@ export default function AddSlotsSection() {
       console.log("Updated dateSlots after adding:", updatedSlots);
       return updatedSlots;
     });
-
-    // Auto-save after adding new slot
-    setTimeout(() => {
-      saveAvailabilityForDate(dateKey);
-    }, 500);
   };
 
   const handleTimeChange = (
@@ -246,11 +240,6 @@ export default function AddSlotsSection() {
     if (saveTimeoutRef.current[dateKey]) {
       clearTimeout(saveTimeoutRef.current[dateKey]);
     }
-
-    saveTimeoutRef.current[dateKey] = setTimeout(() => {
-      console.log("Auto-saving for dateKey:", dateKey);
-      saveAvailabilityForDate(dateKey);
-    }, 2000);
   };
 
   const handleDeleteSlot = async (

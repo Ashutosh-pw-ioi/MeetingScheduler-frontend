@@ -1,6 +1,6 @@
 export interface TimeRange {
   startTime: string; // HH:MM format
-  endTime: string;   // HH:MM format
+  endTime: string; // HH:MM format
 }
 
 export interface DailyAvailability {
@@ -23,8 +23,8 @@ export interface DayAvailabilityRequest {
 }
 
 export interface DeleteRangeRequest {
-  startTime: string; // ISO string
-  endTime: string;   // ISO string
+  startTime: string | null; // ISO string
+  endTime: string | null; // ISO string
 }
 
 export interface AvailabilityApiResponse {

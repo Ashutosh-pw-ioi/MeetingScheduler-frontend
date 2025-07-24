@@ -65,12 +65,4 @@ const PieChartComponent = ({ data, title }: { data: any[]; title: string }) => {
   );
 };
 
-// Example usage with sample data
-const sampleData = [
-  { name: "Category A", value: 400 },
-  { name: "Category B", value: 300 },
-  { name: "Category C", value: 200 },
-  { name: "Category D", value: 100 },
-];
-
 export default PieChartComponent;

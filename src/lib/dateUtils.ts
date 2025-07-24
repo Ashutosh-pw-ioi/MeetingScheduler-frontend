@@ -10,7 +10,7 @@ export function formatDateKey(date: Date): string {
 
 
 
-export function createISODateTime(date: Date, time: string): string {
+export function createISODateTime(date: Date, time: string): string | null{
   const [hours, minutes] = time.split(":").map(Number);
 
   // Treat this as Asia/Kolkata time

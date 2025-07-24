@@ -1,17 +1,23 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import SimpleTable from "../../Table/SimpleTable";
 import EmptyList from "../EmptyList";
 import { MeetingsService } from "../../../services/meetingService";
 import { Meeting, CategorizedMeetings } from "../../../types/meeting";
-import { AlertCircle, RefreshCw, Users, Calendar, Clock, ExternalLink } from "lucide-react";
+import {
+  AlertCircle,
+  RefreshCw,
+  Users,
+  Calendar,
+  Clock,
+  ExternalLink,
+} from "lucide-react";
 
 export default function MeetingsSection(): React.JSX.Element {
   const [meetings, setMeetings] = useState<CategorizedMeetings>({
     todays: [],
     upcoming: [],
-    past: []
+    past: [],
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -25,25 +31,25 @@ export default function MeetingsSection(): React.JSX.Element {
     try {
       setError(null);
       const meetingsData = await MeetingsService.getAllMeetings();
-      
+
       // Format meetings for table display with proper IDs
       const formattedMeetings: CategorizedMeetings = {
-        todays: meetingsData.todays.map((meeting, index) => 
+        todays: meetingsData.todays.map((meeting, index) =>
           MeetingsService.formatMeetingForTable(meeting, index)
         ),
-        upcoming: meetingsData.upcoming.map((meeting, index) => 
+        upcoming: meetingsData.upcoming.map((meeting, index) =>
           MeetingsService.formatMeetingForTable(meeting, index)
         ),
-        past: meetingsData.past.map((meeting, index) => 
+        past: meetingsData.past.map((meeting, index) =>
           MeetingsService.formatMeetingForTable(meeting, index)
-        )
+        ),
       };
-      
+
       setMeetings(formattedMeetings);
-      console.log('Formatted meetings data:', formattedMeetings);
+      console.log("Formatted meetings data:", formattedMeetings);
     } catch (error) {
-      console.error('Failed to load meetings:', error);
-      setError('Failed to load meetings data. Please try again.');
+      console.error("Failed to load meetings:", error);
+      setError("Failed to load meetings data. Please try again.");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -62,25 +68,15 @@ export default function MeetingsSection(): React.JSX.Element {
   };
 
   const handleJoinMeeting = (meetingLink: string | null): void => {
-    if (meetingLink && meetingLink !== 'Not available') {
-      window.open(meetingLink, '_blank', 'noopener,noreferrer');
+    if (meetingLink && meetingLink !== "Not available") {
+      window.open(meetingLink, "_blank", "noopener,noreferrer");
     }
-  };
-
-  const tableProps = {
-    searchFields: ["student_name", "student_email", "student_phone"],
-    itemsPerPage: 5,
-    badgeFields: ["scheduled_time"],
-    arrayFields: [],
-    dropdownFields: [],
   };
 
   // Custom render function for meeting link
   const renderMeetingLink = (meeting: Meeting): React.JSX.Element => {
-    if (!meeting.meeting_link || meeting.meeting_link === 'Not available') {
-      return (
-        <span className="text-gray-400 text-sm">Not available</span>
-      );
+    if (!meeting.meeting_link || meeting.meeting_link === "Not available") {
+      return <span className="text-gray-400 text-sm">Not available</span>;
     }
 
     return (
@@ -95,7 +91,9 @@ export default function MeetingsSection(): React.JSX.Element {
   };
 
   // Enhanced table component that includes meeting link rendering
-  const EnhancedTable: React.FC<{ data: Meeting[] }> = ({ data }): React.JSX.Element => {
+  const EnhancedTable: React.FC<{ data: Meeting[] }> = ({
+    data,
+  }): React.JSX.Element => {
     if (data.length === 0) {
       return <p className="text-gray-400 italic">No meetings found</p>;
     }
@@ -103,7 +101,10 @@ export default function MeetingsSection(): React.JSX.Element {
     return (
       <div className="space-y-4">
         {data.map((meeting) => (
-          <div key={meeting.id} className="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow">
+          <div
+            key={meeting.id}
+            className="bg-white border rounded-lg p-4 hover:shadow-md transition-shadow"
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div>
                 <p className="text-sm text-gray-500">Student</p>
@@ -122,7 +123,9 @@ export default function MeetingsSection(): React.JSX.Element {
                 </div>
                 <div className="flex items-center gap-1">
                   <Clock className="w-4 h-4 text-gray-400" />
-                  <span className={`px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800`}>
+                  <span
+                    className={`px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800`}
+                  >
                     {meeting.scheduled_time}
                   </span>
                 </div>
@@ -151,7 +154,8 @@ export default function MeetingsSection(): React.JSX.Element {
     );
   }
 
-  const totalMeetings = meetings.todays.length + meetings.upcoming.length + meetings.past.length;
+  const totalMeetings =
+    meetings.todays.length + meetings.upcoming.length + meetings.past.length;
 
   return (
     <div className="p-4 relative">
@@ -168,7 +172,9 @@ export default function MeetingsSection(): React.JSX.Element {
               disabled={refreshing}
               className="text-red-600 hover:text-red-800 disabled:opacity-50"
             >
-              <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
+              />
             </button>
           </div>
         </div>
@@ -190,7 +196,9 @@ export default function MeetingsSection(): React.JSX.Element {
                   disabled={refreshing}
                   className="flex items-center gap-1 px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors disabled:opacity-50"
                 >
-                  <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+                  <RefreshCw
+                    className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
+                  />
                   Refresh
                 </button>
               </div>

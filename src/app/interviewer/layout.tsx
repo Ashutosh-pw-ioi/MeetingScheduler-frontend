@@ -83,10 +83,12 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
     };
 
     checkAuthentication();
-  }, []); // Empty dependency array to run only once
+  }, [router]); // Empty dependency array to run only once
 
   const handleLogout = (): void => {
     const logoutUrl = AuthService.getLogoutUrl();
+    console.log(logoutUrl);
+    
     window.location.href = logoutUrl;
   };
 
@@ -182,10 +184,12 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
             <div className="mt-3 pt-3 border-t border-gray-200">
               <div className="flex items-center space-x-2">
                 {user.avatarUrl && (
-                  <img
+                  <Image
                     src={user.avatarUrl}
                     alt="User Avatar"
-                    className="w-8 h-8 rounded-full"
+                    width={32}
+                    height={32}
+                    className="rounded-full"
                   />
                 )}
                 <div className="flex-1 min-w-0">
