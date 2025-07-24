@@ -1,8 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
+import { AuthService } from "@/services/authService";
+import { User } from "@/types/auth";
 
 interface LoginPageProps {
   role: "interviewer" | "interviewer";
@@ -11,24 +14,63 @@ interface LoginPageProps {
 
 export default function LoginPage({ role, imagePath }: LoginPageProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const hasCheckedAuth = useRef(false);
 
-  const handleGoogleSignIn = async () => {
+  useEffect(() => {
+    // Prevent multiple auth checks
+    if (hasCheckedAuth.current) return;
+    hasCheckedAuth.current = true;
+
+    const checkExistingAuth = async (): Promise<void> => {
+      console.log('Starting auth check...');
+      try {
+        const user: User | null = await AuthService.checkAuth();
+        if (user) {
+          console.log('User authenticated, redirecting to dashboard...');
+          router.replace('/interviewer');
+          return;
+        }
+        console.log('User not authenticated');
+      } catch (error) {
+        console.log('Auth check error:', error);
+      } finally {
+        setIsCheckingAuth(false);
+      }
+    };
+
+    const handleAuthError = (): void => {
+      const error = searchParams.get('error');
+      if (error === 'auth_failed') {
+        toast.error('Authentication failed. Please try again.', {
+          toastId: "auth-error",
+          autoClose: 4000,
+        });
+      }
+    };
+
+    checkExistingAuth();
+    handleAuthError();
+  }, []); // Empty dependency array - run only once
+
+  const handleGoogleSignIn = async (): Promise<void> => {
+    if (isLoading) return; // Prevent multiple clicks
+    
     setIsLoading(true);
 
     try {
-      // Add your Google OAuth logic here
-      // For example: window.location.href = '/auth/google';
-
       toast.success(`Redirecting to Google Sign In...`, {
         toastId: "google-redirect",
         autoClose: 2000,
       });
 
+      // Small delay to show the toast
       setTimeout(() => {
-        // Replace with your actual Google OAuth URL or logic
-        console.log(`Initiating Google Sign In for ${role} role`);
-        // window.location.href = `/auth/google?role=${role}`;
-      }, 1000);
+        const authUrl = AuthService.getGoogleAuthUrl(role);
+        window.location.href = authUrl;
+      }, 500);
     } catch (error) {
       console.error("Google Sign In error:", error);
 
@@ -36,10 +78,21 @@ export default function LoginPage({ role, imagePath }: LoginPageProps) {
         toastId: "google-error",
         autoClose: 4000,
       });
-    } finally {
       setIsLoading(false);
     }
   };
+
+  // Show loading while checking authentication
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4 bg-[#fafafa]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
+          <p className="text-gray-600">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-[#fafafa]">
