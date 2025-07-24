@@ -129,7 +129,7 @@ function MeetingsModal({
             </div>
             <h3 className="text-lg font-medium mb-2">No meetings scheduled</h3>
             <p className="text-sm">
-              This interviewer doesn't have any upcoming meetings.
+              This interviewer doesn&lsquo;t have any upcoming meetings.
             </p>
           </div>
         )}

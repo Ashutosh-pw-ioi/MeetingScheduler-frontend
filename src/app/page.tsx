@@ -9,7 +9,7 @@ export default function Home() {
     <div className="flex flex-col items-center justify-center min-h-screen gap-4">
       <h1 className="text-2xl font-bold">Select Your Role</h1>
       <button
-        onClick={() => router.push("/auth/login/interviewee")}
+        onClick={() => router.push("/interviewee")}
         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 cursor-pointer"
       >
         Interviewee
@@ -21,7 +21,7 @@ export default function Home() {
         Interviewer
       </button>
       <button
-        onClick={() => router.push("/auth/login/admin")}
+        onClick={() => router.push("/admin")}
         className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 cursor-pointer"
       >
         Admin

@@ -31,7 +31,7 @@ export default function EmptyList({ taskType }: EmptyListProps) {
         </div>
 
         <div className="text-md font-bold">
-          No <span className="underline">{taskType}</span> tasks assigned as of
+          No <span className="underline">{taskType}</span> assigned as of
           now
         </div>
       </div>

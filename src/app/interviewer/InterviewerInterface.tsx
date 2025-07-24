@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { AuthService } from "@/services/authService";
 import { OverviewService } from "@/services/overviewService";
 import { CalendarStatus } from "@/types/auth";
-import { TodaySummary, WeeklyTrendsResponse, MetricData, ChartData, WeeklyTrendData } from "../../types/overview";
-import { CategorizedMeetings } from "../../types/meeting";
+import { MetricData, ChartData, WeeklyTrendData } from "../../types/overview";
 import MetricCard from "../overviewComponents/MetricCard";
 import PieChartComponent from "../overviewComponents/PieChartComponent";
 import WeeklyTrendChart from "../overviewComponents/WeeklyTrendChart";
@@ -15,23 +14,30 @@ const InterviewerInterface: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [calendarStatus, setCalendarStatus] = useState<CalendarStatus | null>(null);
-  const [showCalendarSuccess, setShowCalendarSuccess] = useState<boolean>(false);
-  
+  const [calendarStatus, setCalendarStatus] = useState<CalendarStatus | null>(
+    null
+  );
+  const [showCalendarSuccess, setShowCalendarSuccess] =
+    useState<boolean>(false);
+
   // Data states
   const [metrics, setMetrics] = useState<MetricData[]>([]);
-  const [meetingDistributionData, setMeetingDistributionData] = useState<ChartData[]>([]);
+  const [meetingDistributionData, setMeetingDistributionData] = useState<
+    ChartData[]
+  >([]);
   const [slotStatusData, setSlotStatusData] = useState<ChartData[]>([]);
-  const [weeklyTrendsData, setWeeklyTrendsData] = useState<WeeklyTrendData[]>([]);
-  
+  const [weeklyTrendsData, setWeeklyTrendsData] = useState<WeeklyTrendData[]>(
+    []
+  );
+
   const hasInitialized = useRef(false);
   const successTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const loadOverviewData = async (): Promise<void> => {
+  const loadOverviewData = useCallback(async (): Promise<void> => {
     try {
       setError(null);
-      console.log('Loading overview data...');
-      
+      console.log("Loading overview data...");
+
       // Fetch all data in parallel
       const [todaySummary, weeklyTrends, allMeetings] = await Promise.all([
         OverviewService.getTodaySummary(),
@@ -39,14 +45,19 @@ const InterviewerInterface: React.FC = () => {
         OverviewService.getAllMeetings(),
       ]);
 
-      console.log('All overview data fetched:', { todaySummary, weeklyTrends, allMeetings });
+      console.log("All overview data fetched:", {
+        todaySummary,
+        weeklyTrends,
+        allMeetings,
+      });
 
       // Calculate metrics from today's summary
       const calculatedMetrics = OverviewService.calculateMetrics(todaySummary);
       setMetrics(calculatedMetrics);
 
       // Calculate meeting distribution from all meetings
-      const meetingDistribution = OverviewService.calculateMeetingDistribution(allMeetings);
+      const meetingDistribution =
+        OverviewService.calculateMeetingDistribution(allMeetings);
       setMeetingDistributionData(meetingDistribution);
 
       // Calculate slot status from today's summary
@@ -56,21 +67,20 @@ const InterviewerInterface: React.FC = () => {
       // Set weekly trends data
       setWeeklyTrendsData(weeklyTrends.weeklyTrends);
 
-      console.log('Overview data processed and set to state');
-
+      console.log("Overview data processed and set to state");
     } catch (error) {
-      console.error('Failed to load overview data:', error);
-      setError('Failed to load dashboard data. Please try again.');
+      console.error("Failed to load overview data:", error);
+      setError("Failed to load dashboard data. Please try again.");
     }
-  };
+  }, []);
 
-  const initializeData = async (): Promise<void> => {
+  const initializeData = useCallback(async (): Promise<void> => {
     try {
       setLoading(true);
-      
+
       // Check calendar status
       const calendarData = await AuthService.checkCalendarStatus();
-      console.log('Calendar status:', calendarData);
+      console.log("Calendar status:", calendarData);
       setCalendarStatus(calendarData);
 
       // Show success message if calendar is connected
@@ -83,15 +93,14 @@ const InterviewerInterface: React.FC = () => {
 
       // Load overview data
       await loadOverviewData();
-
     } catch (err) {
-      console.error('Failed to initialize data:', err);
-      setError('Failed to load dashboard data');
+      console.error("Failed to initialize data:", err);
+      setError("Failed to load dashboard data");
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, [loadOverviewData]);
 
   useEffect(() => {
     // Prevent multiple initializations
@@ -99,7 +108,7 @@ const InterviewerInterface: React.FC = () => {
     hasInitialized.current = true;
 
     initializeData();
-  }, []); // Empty dependency array
+  }, [initializeData]);
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -195,7 +204,9 @@ const InterviewerInterface: React.FC = () => {
               disabled={refreshing}
               className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors disabled:opacity-50"
             >
-              <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
+              />
               <span className="text-sm">Refresh</span>
             </button>
           </div>
@@ -224,14 +235,28 @@ const InterviewerInterface: React.FC = () => {
           <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <svg className="w-5 h-5 text-yellow-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                <svg
+                  className="w-5 h-5 text-yellow-600 mr-2"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
                 </svg>
                 <div>
-                  <p className="text-yellow-800 font-medium">Calendar Not Connected</p>
-                  <p className="text-yellow-700 text-sm">Connect your Google Calendar to enable interview scheduling</p>
+                  <p className="text-yellow-800 font-medium">
+                    Calendar Not Connected
+                  </p>
+                  <p className="text-yellow-700 text-sm">
+                    Connect your Google Calendar to enable interview scheduling
+                  </p>
                   {calendarStatus.error && (
-                    <p className="text-yellow-700 text-xs mt-1">{calendarStatus.error}</p>
+                    <p className="text-yellow-700 text-xs mt-1">
+                      {calendarStatus.error}
+                    </p>
                   )}
                 </div>
               </div>
@@ -246,30 +271,52 @@ const InterviewerInterface: React.FC = () => {
         )}
 
         {/* Success message for calendar connection - Shows for 3 seconds only */}
-        {showCalendarSuccess && calendarStatus && calendarStatus.hasCalendarAccess && (
-          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg transition-all duration-300 ease-in-out">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <svg className="w-5 h-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <div>
-                  <p className="text-green-800 font-medium">Calendar Connected Successfully</p>
-                  <p className="text-green-700 text-sm">Your Google Calendar is connected and ready for scheduling</p>
+        {showCalendarSuccess &&
+          calendarStatus &&
+          calendarStatus.hasCalendarAccess && (
+            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg transition-all duration-300 ease-in-out">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <svg
+                    className="w-5 h-5 text-green-600 mr-2"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <div>
+                    <p className="text-green-800 font-medium">
+                      Calendar Connected Successfully
+                    </p>
+                    <p className="text-green-700 text-sm">
+                      Your Google Calendar is connected and ready for scheduling
+                    </p>
+                  </div>
                 </div>
+                <button
+                  onClick={handleDismissSuccess}
+                  className="text-green-600 hover:text-green-800 transition-colors"
+                  aria-label="Dismiss"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
               </div>
-              <button
-                onClick={handleDismissSuccess}
-                className="text-green-600 hover:text-green-800 transition-colors"
-                aria-label="Dismiss"
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </button>
             </div>
-          </div>
-        )}
+          )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {metrics.map((metric, index) => (

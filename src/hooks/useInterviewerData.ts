@@ -1,7 +1,7 @@
 // hooks/useInterviewerData.ts
 import { useState, useEffect, useCallback } from 'react';
 import { interviewerService } from '../services/adminInterviewerApiService';
-import { Interviewer, InterviewerTableData } from '../types/interviewer.types';
+import { Interviewer, InterviewerTableData } from '../types/adminInterviewer';
 
 interface UseInterviewerDataReturn {
   interviewersData: Interviewer[];

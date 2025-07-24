@@ -47,7 +47,7 @@ export default function InterviewScheduler() {
   };
 
   return (
-    <div className="min-h-screen sm:p-4 flex items-center justify-center bg-[#fafafa]">
+    <div className="min-h-screen px-4 sm:p-4 flex items-center justify-center bg-[#fafafa]">
       <div
         className={`${
           appointmentData && interviewFormData

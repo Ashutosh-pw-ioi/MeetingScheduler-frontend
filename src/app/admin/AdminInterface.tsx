@@ -40,7 +40,7 @@ const AdminOverview: React.FC = () => {
     <div className="min-h-screen p-2 sm:p-4">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-gray-900">
             Admin Overview
           </h1>
           <p className="text-gray-600 mt-2">

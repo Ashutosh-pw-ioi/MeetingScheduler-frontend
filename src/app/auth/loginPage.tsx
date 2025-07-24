@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Image from "next/image";
@@ -12,7 +12,7 @@ interface LoginPageProps {
   imagePath: string;
 }
 
-export default function LoginPage({ role, imagePath }: LoginPageProps) {
+function LoginContent({ role, imagePath }: LoginPageProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const router = useRouter();
@@ -20,31 +20,30 @@ export default function LoginPage({ role, imagePath }: LoginPageProps) {
   const hasCheckedAuth = useRef(false);
 
   useEffect(() => {
-    // Prevent multiple auth checks
     if (hasCheckedAuth.current) return;
     hasCheckedAuth.current = true;
 
     const checkExistingAuth = async (): Promise<void> => {
-      console.log('Starting auth check...');
+      console.log("Starting auth check...");
       try {
         const user: User | null = await AuthService.checkAuth();
         if (user) {
-          console.log('User authenticated, redirecting to dashboard...');
-          router.replace('/interviewer');
+          console.log("User authenticated, redirecting to dashboard...");
+          router.replace("/interviewer");
           return;
         }
-        console.log('User not authenticated');
+        console.log("User not authenticated");
       } catch (error) {
-        console.log('Auth check error:', error);
+        console.log("Auth check error:", error);
       } finally {
         setIsCheckingAuth(false);
       }
     };
 
     const handleAuthError = (): void => {
-      const error = searchParams.get('error');
-      if (error === 'auth_failed') {
-        toast.error('Authentication failed. Please try again.', {
+      const error = searchParams.get("error");
+      if (error === "auth_failed") {
+        toast.error("Authentication failed. Please try again.", {
           toastId: "auth-error",
           autoClose: 4000,
         });
@@ -53,11 +52,11 @@ export default function LoginPage({ role, imagePath }: LoginPageProps) {
 
     checkExistingAuth();
     handleAuthError();
-  }, []); // Empty dependency array - run only once
+  }, [router, searchParams]);
 
   const handleGoogleSignIn = async (): Promise<void> => {
-    if (isLoading) return; // Prevent multiple clicks
-    
+    if (isLoading) return;
+
     setIsLoading(true);
 
     try {
@@ -66,7 +65,6 @@ export default function LoginPage({ role, imagePath }: LoginPageProps) {
         autoClose: 2000,
       });
 
-      // Small delay to show the toast
       setTimeout(() => {
         const authUrl = AuthService.getGoogleAuthUrl(role);
         window.location.href = authUrl;
@@ -82,7 +80,6 @@ export default function LoginPage({ role, imagePath }: LoginPageProps) {
     }
   };
 
-  // Show loading while checking authentication
   if (isCheckingAuth) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-[#fafafa]">
@@ -198,5 +195,24 @@ export default function LoginPage({ role, imagePath }: LoginPageProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+function LoginPageFallback() {
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[#fafafa]">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading...</p>
+      </div>
+    </div>
+  );
+}
+
+export default function LoginPage({ role, imagePath }: LoginPageProps) {
+  return (
+    <Suspense fallback={<LoginPageFallback />}>
+      <LoginContent role={role} imagePath={imagePath} />
+    </Suspense>
   );
 }

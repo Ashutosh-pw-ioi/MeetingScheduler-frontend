@@ -2,7 +2,15 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { HelpCircle, Menu, X, ChartPie, CirclePlus, Video, LogOut } from "lucide-react";
+import {
+  HelpCircle,
+  Menu,
+  X,
+  ChartPie,
+  CirclePlus,
+  Video,
+  LogOut,
+} from "lucide-react";
 import Image from "next/image";
 import { AuthService } from "@/services/authService";
 import { User } from "@/types/auth";
@@ -57,28 +65,30 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
     hasCheckedAuth.current = true;
 
     const checkAuthentication = async (): Promise<void> => {
-      console.log('Checking authentication in layout...');
+      console.log("Checking authentication in layout...");
       try {
         const userData = await AuthService.checkAuth();
         if (!userData) {
-          console.log('User not authenticated, redirecting to login...');
-          router.replace('/auth/login/interviewer');
+          console.log("User not authenticated, redirecting to login...");
+          router.replace("/auth/login/interviewer");
           return;
         }
-        console.log('User authenticated in layout:', userData);
+        console.log("User authenticated in layout:", userData);
         setUser(userData);
         setIsAuthenticating(false);
       } catch (error) {
-        console.error('Authentication check failed:', error);
-        router.replace('/auth/login/interviewer');
+        console.error("Authentication check failed:", error);
+        router.replace("/auth/login/interviewer");
       }
     };
 
     checkAuthentication();
-  }, []); // Empty dependency array to run only once
+  }, [router]); // Empty dependency array to run only once
 
   const handleLogout = (): void => {
     const logoutUrl = AuthService.getLogoutUrl();
+    console.log(logoutUrl);
+    
     window.location.href = logoutUrl;
   };
 
@@ -145,14 +155,12 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
           <Menu className="w-6 h-6" />
         )}
       </button>
-
       {isMobileMenuOpen && (
         <div
           className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40 transition-opacity duration-300"
           onClick={() => setIsMobileMenuOpen(false)}
         />
       )}
-
       <div
         id="mobile-sidebar"
         className={`fixed lg:sticky inset-y-0 right-0 lg:left-0 z-40 w-64 h-screen 
@@ -164,31 +172,31 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
               : "translate-x-full lg:translate-x-0"
           }`}
       >
-        <div className="p-6 pb-4 sm:pb-6 border-b border-white/20 md:bg-transparent md:mb-0">
+        <div className="p-6 pb-4 sm:pb-2 border-b border-white/20 md:bg-transparent md:mb-0">
           <Image
             src="/PWIOILogo.png"
             alt="PW IOI Logo"
             width={160}
             height={0}
           />
-          {/* User info */}
+
           {user && (
             <div className="mt-3 pt-3 border-t border-gray-200">
               <div className="flex items-center space-x-2">
                 {user.avatarUrl && (
-                  <img
+                  <Image
                     src={user.avatarUrl}
                     alt="User Avatar"
-                    className="w-8 h-8 rounded-full"
+                    width={32}
+                    height={32}
+                    className="rounded-full"
                   />
                 )}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900 truncate">
                     {user.name}
                   </p>
-                  <p className="text-xs text-gray-500 truncate">
-                    {user.email}
-                  </p>
+                  <p className="text-xs text-gray-500 truncate">{user.email}</p>
                 </div>
               </div>
             </div>
@@ -232,8 +240,11 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
           </button>
         </div>
       </div>
-
-      <div className="flex-1 p-6 bg-gray-50 lg:ml-0">{children}</div>
+      <div className="flex-1 bg-gray-50 lg:ml-0">
+        <div className="px-2 py-4 sm:p-6 w-screen md:w-[1000px]">
+          {children}
+        </div>
+      </div>
     </div>
   );
 };
