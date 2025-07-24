@@ -101,7 +101,7 @@ const SuccessComponent = () => {
       <div className="max-w-md w-full">
         <div className="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden">
           <div className="bg-black p-6 text-center">
-            <div className="flex items-center justify-center gap-2">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
               <CircleCheck className="w-6 h-6 text-white" />
               <h2 className="text-xl font-bold text-white mb-1">
                 Congratulations, {bookingData.booking.studentName}!
@@ -168,7 +168,7 @@ const SuccessComponent = () => {
                   onClick={handleMeetingLinkClick}
                   className="bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded-lg p-3 flex items-center justify-between transition-colors group cursor-pointer w-full"
                 >
-                  <span className="text-gray-700 font-medium text-xs truncate">
+                  <span className="text-gray-700 font-medium text-[10px] sm:text-xs truncate">
                     {bookingData.meetingLink
                       ? formatMeetingLink(bookingData.meetingLink)
                       : "Meeting link will be shared"}
