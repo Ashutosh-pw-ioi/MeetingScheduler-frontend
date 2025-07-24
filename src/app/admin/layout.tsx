@@ -2,7 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { HelpCircle, Menu, X, ChartPie, CirclePlus, Video } from "lucide-react";
+import {
+  HelpCircle,
+  Menu,
+  X,
+  ChartPie,
+  User,
+  GraduationCap,
+} from "lucide-react";
 import Image from "next/image";
 
 const StudentLayout = ({ children }: { children: React.ReactNode }) => {
@@ -14,31 +21,31 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
       id: "overview",
       label: "Overview",
       icon: ChartPie,
-      href: "/interviewer",
+      href: "/admin",
     },
     {
-      id: "addslots",
-      label: "Add Slots",
-      icon: CirclePlus,
-      href: "/interviewer/addslots",
+      id: "interviewers",
+      label: "Interviewers",
+      icon: User,
+      href: "/admin/interviewers",
     },
     {
-      id: "meetings",
-      label: "Meetings",
-      icon: Video,
-      href: "/interviewer/meetings",
+      id: "interviewees",
+      label: "Interviewees",
+      icon: GraduationCap,
+      href: "/admin/interviewees",
     },
     {
       id: "help",
       label: "Help",
       icon: HelpCircle,
-      href: "/interviewer/help",
+      href: "/admin/help",
     },
   ];
 
   const getActiveSection = () => {
-    if (pathname.includes("/addslots")) return "addslots";
-    if (pathname.includes("/meetings")) return "meetings";
+    if (pathname.includes("/interviewers")) return "interviewers";
+    if (pathname.includes("/interviewees")) return "interviewees";
     if (pathname.includes("/help")) return "help";
     return "overview";
   };
