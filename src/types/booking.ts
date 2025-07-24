@@ -79,3 +79,18 @@ export interface NetworkError extends Error {
   code?: string;
   request?: unknown;
 }
+
+export interface StudentAuthRequest {
+  phone: string;
+}
+
+export interface StudentAuthResponse {
+  authorized: boolean;
+  message: string;
+}
+
+export interface StudentAuthApiResponse {
+  success: boolean;
+  data: StudentAuthResponse;
+  message: string;
+}

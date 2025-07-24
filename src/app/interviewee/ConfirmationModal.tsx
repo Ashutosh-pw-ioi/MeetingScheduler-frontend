@@ -1,3 +1,4 @@
+// components/ConfirmationModal.tsx
 import React from "react";
 import { X, Calendar, Clock, AlertCircle } from "lucide-react";
 import { ConfirmationModalProps, FormData } from "../../types/booking";
@@ -56,6 +57,14 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     handleBlur(field);
   };
 
+  // Updated button text to show different states
+  const getButtonText = (): string => {
+    if (isBooking) {
+      return "Checking Authorization...";
+    }
+    return "Confirm Interview";
+  };
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-lg flex items-center justify-center z-50 p-2 sm:p-4">
       <div className="bg-white rounded-lg shadow-xl w-full mx-2 sm:mx-4 sm:max-w-4xl transform transition-all flex flex-col max-h-[95vh] sm:max-h-[90vh]">
@@ -87,7 +96,15 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                       size={16}
                       className="text-red-500 mr-2 mt-0.5 flex-shrink-0"
                     />
-                    <p className="text-red-700 text-sm">{bookingError}</p>
+                    <div className="text-red-700 text-sm">
+                      <p className="font-medium">Authorization Failed</p>
+                      <p className="mt-1">{bookingError}</p>
+                      {bookingError.includes('not found in database') && (
+                        <p className="mt-2 text-xs">
+                          Please contact admin for registration or verify your phone number.
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
@@ -149,7 +166,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                     value={formData.email}
                     onChange={handleFieldChange("email")}
                     onBlur={handleFieldBlur("email")}
-                    placeholder="Enter registered email address "
+                    placeholder="Enter registered email address"
                     disabled={isBooking}
                     className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-md transition-colors focus:outline-none text-base disabled:opacity-50 disabled:cursor-not-allowed ${
                       getFieldMessage("email", touched, errors, formData)
@@ -196,7 +213,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                     value={formData.phone}
                     onChange={handleFieldChange("phone")}
                     onBlur={handleFieldBlur("phone")}
-                    placeholder="Enter 10-digit phone number"
+                    placeholder="Enter registered phone number"
                     disabled={isBooking}
                     maxLength={10}
                     className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-md transition-colors focus:outline-none text-base disabled:opacity-50 disabled:cursor-not-allowed ${
@@ -236,7 +253,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                 </div>
 
                 <div className="text-xs text-gray-600 pt-2">
-                  All fields are required
+                  All fields are required. Phone number must be registered in our system.
                 </div>
               </div>
             </div>
@@ -280,9 +297,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 
               <div className="bg-gray-100 border border-gray-300 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
                 <p className="text-sm text-gray-800">
-                  <strong>Note:</strong> Once confirmed, changes may not be
-                  possible. Please ensure the selected date and time work for
-                  your schedule.
+                  <strong>Note:</strong> Your phone number will be verified against our registered student database. Please ensure you use the same phone number used during registration.
                 </p>
               </div>
 
@@ -315,7 +330,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
             }`}
           >
-            {isBooking ? "Booking..." : "Confirm Interview"}
+            {getButtonText()}
           </button>
         </div>
       </div>

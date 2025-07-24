@@ -1,5 +1,15 @@
+// services/bookingService.ts
 import axios from "axios";
-import { BookingResponse, BookingAxiosError, NetworkError, FormData, BookingRequest, TimeSlotData } from '../types/booking';
+import { 
+  BookingResponse, 
+  BookingAxiosError, 
+  NetworkError, 
+  FormData, 
+  BookingRequest, 
+  TimeSlotData,
+  StudentAuthRequest,
+  StudentAuthApiResponse
+} from '../types/booking';
 
 export const getBookingStartTime = (): string => {
   const selectedTimeSlot = localStorage.getItem("selectedTimeSlot");
@@ -28,6 +38,27 @@ export const getBookingStartTime = (): string => {
     console.error("Error creating fallback start time:", error);
     return new Date().toISOString();
   }
+};
+
+// NEW: Check student authorization
+export const checkStudentAuthorization = async (phone: string): Promise<StudentAuthApiResponse> => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000';
+  const authData: StudentAuthRequest = { phone };
+
+  console.log("Checking student authorization:", authData);
+
+  const response = await axios.post<StudentAuthApiResponse>(
+    `${baseUrl}/api/student/checkStudents`,
+    authData,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      timeout: 10000,
+    }
+  );
+
+  return response.data;
 };
 
 export const bookInterview = async (formData: FormData): Promise<BookingResponse> => {
@@ -77,5 +108,30 @@ export const handleBookingError = (error: unknown): string => {
     }
   } else {
     return "An unexpected error occurred. Please try again.";
+  }
+};
+
+// NEW: Handle authorization error
+export const handleAuthorizationError = (error: unknown): string => {
+  console.error("Authorization check failed:", error);
+  
+  if (axios.isAxiosError(error)) {
+    const axiosError = error as BookingAxiosError;
+    if (axiosError.response?.data) {
+      return axiosError.response.data.message;
+    } else if (axiosError.request) {
+      return "Network error. Please check your connection and try again.";
+    } else {
+      return "An unexpected error occurred during authorization check.";
+    }
+  } else if (error instanceof Error) {
+    const networkError = error as NetworkError;
+    if (networkError.code === 'ECONNABORTED') {
+      return "Authorization check timeout. Please try again.";
+    } else {
+      return `Authorization Error: ${networkError.message}`;
+    }
+  } else {
+    return "An unexpected error occurred during authorization check.";
   }
 };
