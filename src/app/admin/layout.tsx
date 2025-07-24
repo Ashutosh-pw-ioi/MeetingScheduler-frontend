@@ -151,7 +151,9 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
         </nav>
       </div>
 
-      <div className="flex-1 p-6 bg-gray-50 lg:ml-0">{children}</div>
+      <div className="flex-1 bg-gray-50 lg:ml-0">
+        <div className="px-2 py-4 sm:p-6 w-screen md:w-[1000px]">{children}</div>
+      </div>
     </div>
   );
 };
