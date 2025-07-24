@@ -634,7 +634,7 @@ export default function AddSlotsSection() {
                                   No time slots added yet
                                   <br />
                                   <span className="text-xs">
-                                    Click Add Slot to create your first time
+                                    Click &quot;Add Slot&quot; to create your first time
                                     slot
                                   </span>
                                 </div>
