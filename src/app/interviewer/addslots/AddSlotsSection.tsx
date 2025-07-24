@@ -108,6 +108,8 @@ export default function AddSlotsSection() {
 
         availabilityData.forEach((dayData) => {
           const dateKey = dayData.date;
+          console.log(dateKey,'*******');
+          
           const slots: TimeSlot[] = [];
 
           dayData.timeRanges.forEach((range, index) => {
