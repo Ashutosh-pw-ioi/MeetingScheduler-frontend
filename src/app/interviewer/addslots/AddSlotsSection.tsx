@@ -108,8 +108,8 @@ export default function AddSlotsSection() {
 
         availabilityData.forEach((dayData) => {
           const dateKey = dayData.date;
-          console.log(dateKey,'*******');
-          
+          console.log(dateKey, "*******");
+
           const slots: TimeSlot[] = [];
 
           dayData.timeRanges.forEach((range, index) => {
@@ -606,17 +606,6 @@ export default function AddSlotsSection() {
                                   month: "long",
                                   day: "numeric",
                                 })}
-
-                                <span className="text-xs text-gray-500 ml-2">
-                                  ({dateKey})
-                                </span>
-                                {slotsForDate.some(
-                                  (slot) => slot.isModified
-                                ) && (
-                                  <span className="ml-2 text-xs text-blue-600 font-normal">
-                                    • Modified
-                                  </span>
-                                )}
                               </div>
                               <button
                                 className="flex items-center gap-1 px-3 py-2 md:py-1 bg-black text-white rounded-md hover:bg-gray-800 transition-colors text-sm cursor-pointer disabled:opacity-50"
@@ -636,8 +625,8 @@ export default function AddSlotsSection() {
                                   No time slots added yet
                                   <br />
                                   <span className="text-xs">
-                                    Click &quot;Add Slot&quot; to create your first time
-                                    slot
+                                    Click &quot;Add Slot&quot; to create your
+                                    first time slot
                                   </span>
                                 </div>
                               ) : (
