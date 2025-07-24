@@ -1,24 +1,33 @@
-export const formatDateKey = (date: Date): string => {
-  // Use UTC methods to match calendar's UTC dates
-  const year = date.getUTCFullYear();
-  const month = (date.getUTCMonth() + 1).toString().padStart(2, '0');
-  const day = (date.getUTCDate() + 1).toString().padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
+import { DateTime } from 'luxon';
 
-export const createISODateTime = (date: Date, time: string): string => {
-  const [hours, minutes] = time.split(':').map(Number);
-  
-  // Create datetime in UTC
-  return new Date(Date.UTC(
-    date.getUTCFullYear(),
-    date.getUTCMonth(),
-    date.getUTCDate(),
-    hours,
-    minutes,
-    0
-  )).toISOString();
-};
+export function formatDateKey(date: Date): string {
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+
+
+
+export function createISODateTime(date: Date, time: string): string {
+  const [hours, minutes] = time.split(":").map(Number);
+
+  // Treat this as Asia/Kolkata time
+  const dt = DateTime.fromObject(
+    {
+      year: date.getFullYear(),
+      month: date.getMonth() + 1,
+      day: date.getDate(),
+      hour: hours,
+      minute: minutes,
+    },
+    { zone: 'Asia/Kolkata' }
+  );
+
+  return dt.toUTC().toISO(); // Return ISO string in UTC
+}
+
 
 export const parseDateKey = (dateKey: string): Date => {
   const [year, month, day] = dateKey.split('-').map(Number);
