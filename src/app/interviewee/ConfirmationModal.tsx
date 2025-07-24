@@ -36,9 +36,20 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     });
   };
 
+  // Enhanced phone input handler that restricts input to digits only and limits to 10 characters
+  const handlePhoneInputChange = (value: string) => {
+    // Only allow digits and limit to 10 characters
+    const cleanValue = value.replace(/\D/g, "").slice(0, 10);
+    handleInputChange("phone", cleanValue);
+  };
+
   const handleFieldChange =
     (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement>) => {
-      handleInputChange(field, e.target.value);
+      if (field === "phone") {
+        handlePhoneInputChange(e.target.value);
+      } else {
+        handleInputChange(field, e.target.value);
+      }
     };
 
   const handleFieldBlur = (field: keyof FormData) => () => {
@@ -138,7 +149,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                     value={formData.email}
                     onChange={handleFieldChange("email")}
                     onBlur={handleFieldBlur("email")}
-                    placeholder="your.email@example.com"
+                    placeholder="Enter registered email address "
                     disabled={isBooking}
                     className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-md transition-colors focus:outline-none text-base disabled:opacity-50 disabled:cursor-not-allowed ${
                       getFieldMessage("email", touched, errors, formData)
@@ -185,23 +196,43 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                     value={formData.phone}
                     onChange={handleFieldChange("phone")}
                     onBlur={handleFieldBlur("phone")}
-                    placeholder="+91 12345-67890"
+                    placeholder="Enter 10-digit phone number"
                     disabled={isBooking}
+                    maxLength={10}
                     className={`w-full px-3 py-2.5 sm:px-4 sm:py-3 border rounded-md transition-colors focus:outline-none text-base disabled:opacity-50 disabled:cursor-not-allowed ${
-                      touched.phone && errors.phone
+                      getFieldMessage("phone", touched, errors, formData)
+                        ?.type === "error"
                         ? "border-red-500 focus:border-red-500"
                         : "border-gray-300 focus:border-black"
                     }`}
                   />
-                  {touched.phone && errors.phone && (
-                    <div className="flex items-start mt-2 text-red-600 text-sm">
-                      <AlertCircle
-                        size={14}
-                        className="mr-1 mt-0.5 flex-shrink-0"
-                      />
-                      {errors.phone}
-                    </div>
-                  )}
+                  {(() => {
+                    const message = getFieldMessage(
+                      "phone",
+                      touched,
+                      errors,
+                      formData
+                    );
+                    return (
+                      message && (
+                        <div
+                          className={`flex items-start mt-2 text-sm ${
+                            message.type === "error"
+                              ? "text-red-600"
+                              : "text-gray-600"
+                          }`}
+                        >
+                          {message.type === "error" && (
+                            <AlertCircle
+                              size={14}
+                              className="mr-1 mt-0.5 flex-shrink-0"
+                            />
+                          )}
+                          <span>{message.text}</span>
+                        </div>
+                      )
+                    );
+                  })()}
                 </div>
 
                 <div className="text-xs text-gray-600 pt-2">
