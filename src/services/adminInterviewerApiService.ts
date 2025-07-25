@@ -25,7 +25,7 @@ apiClient.interceptors.response.use(
 class InterviewerService {
   async getAllInterviewers(): Promise<ApiResponse<Interviewer[]>> {
     try {
-      const response: AxiosResponse<ApiResponse<Interviewer[]>> = await apiClient.get('/admin/allInterviewers');
+      const response: AxiosResponse<ApiResponse<Interviewer[]>> = await apiClient.get('/api/admin/allInterviewers');
       return response.data;
     } catch (error) {
       console.error('Failed to fetch interviewers:', error);
