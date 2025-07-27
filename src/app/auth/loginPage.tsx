@@ -29,7 +29,7 @@ function LoginContent({ role, imagePath }: LoginPageProps) {
         const user: User | null = await AuthService.checkAuth();
         if (user) {
           console.log("User authenticated, redirecting to dashboard...");
-          router.replace("/interviewer");
+          router.replace("/interviewer-D9C75C81F03C9AA4");
           return;
         }
         console.log("User not authenticated");
