@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import SimpleTable from "../../Table/SimpleTable";
-import EmptyList from "@/app/interviewer/EmptyList";
+import EmptyList from "@/app/interviewer-D9C75C81F03C9AA4/EmptyList";
 import {
   UserRound,
   CalendarDays,

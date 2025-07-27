@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  HelpCircle,
   Menu,
   X,
   ChartPie,
@@ -41,13 +40,7 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
       label: "Meetings",
       icon: Video,
       href: "/interviewer-D9C75C81F03C9AA4/meetings",
-    },
-    {
-      id: "help",
-      label: "Help",
-      icon: HelpCircle,
-      href: "/interviewer-D9C75C81F03C9AA4/help",
-    },
+   }, 
   ];
 
   const getActiveSection = (): string => {

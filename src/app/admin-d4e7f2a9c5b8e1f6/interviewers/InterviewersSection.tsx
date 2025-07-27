@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import EmptyList from "@/app/interviewer/EmptyList";
+import EmptyList from "@/app/interviewer-D9C75C81F03C9AA4/EmptyList";
 import SimpleTable from "../../Table/SimpleTable";
 import { CalendarOff } from "lucide-react";
 import { useInterviewerData } from "../../../hooks/useInterviewerData";
