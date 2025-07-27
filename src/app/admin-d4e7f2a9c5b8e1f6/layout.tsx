@@ -21,25 +21,25 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
       id: "overview",
       label: "Overview",
       icon: ChartPie,
-      href: "/admin",
+      href: "/admin-d4e7f2a9c5b8e1f6",
     },
     {
       id: "interviewers",
       label: "Interviewers",
       icon: User,
-      href: "/admin/interviewers",
+      href: "/admin-d4e7f2a9c5b8e1f6/interviewers",
     },
     {
       id: "interviewees",
       label: "Interviewees",
       icon: GraduationCap,
-      href: "/admin/interviewees",
+      href: "/admin-d4e7f2a9c5b8e1f6/interviewees",
     },
     {
       id: "help",
       label: "Help",
       icon: HelpCircle,
-      href: "/admin/help",
+      href: "/admin-d4e7f2a9c5b8e1f6/help",
     },
   ];
 

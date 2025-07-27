@@ -42,7 +42,7 @@ export const getBookingStartTime = (): string => {
 
 // NEW: Check student authorization
 export const checkStudentAuthorization = async (phone: string): Promise<StudentAuthApiResponse> => {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000';
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   const authData: StudentAuthRequest = { phone };
 
   console.log("Checking student authorization:", authData);
@@ -72,7 +72,7 @@ export const bookInterview = async (formData: FormData): Promise<BookingResponse
 
   console.log("Sending booking request:", bookingData);
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000';
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
   const response = await axios.post<BookingResponse>(
     `${baseUrl}/api/booking/book`,
     bookingData,
