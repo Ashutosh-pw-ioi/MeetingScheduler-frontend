@@ -20,7 +20,7 @@ export default function CalendarComponent({
   );
 
   const today = new Date();
-  const highlightedDates = Array.from({ length: 15 }, (_, i) => {
+  const highlightedDates = Array.from({ length: 5 }, (_, i) => {
     const highlightDate = new Date(today);
     highlightDate.setDate(today.getDate() + i);
     return highlightDate;
