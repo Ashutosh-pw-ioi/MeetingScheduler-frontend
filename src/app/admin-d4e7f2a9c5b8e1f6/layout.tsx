@@ -35,18 +35,11 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
       icon: GraduationCap,
       href: "/admin-d4e7f2a9c5b8e1f6/interviewees",
     },
-    {
-      id: "help",
-      label: "Help",
-      icon: HelpCircle,
-      href: "/admin-d4e7f2a9c5b8e1f6/help",
-    },
   ];
 
   const getActiveSection = () => {
     if (pathname.includes("/interviewers")) return "interviewers";
     if (pathname.includes("/interviewees")) return "interviewees";
-    if (pathname.includes("/help")) return "help";
     return "overview";
   };
 
@@ -152,7 +145,9 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
       </div>
 
       <div className="flex-1 bg-gray-50 lg:ml-0">
-        <div className="px-2 py-4 sm:p-6 w-screen md:w-[1000px]">{children}</div>
+        <div className="px-2 py-4 sm:p-6 w-screen md:w-[1000px]">
+          {children}
+        </div>
       </div>
     </div>
   );
