@@ -64,7 +64,7 @@ export default function SlotsPane({
   useEffect(() => {
     if (!isMounted) return;
     
-    const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:8000'}/api/booking/availability`;
+    const apiUrl = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/booking/availability`;
     const fetchAvailability = async () => {
       try {
         setLoading(true);
