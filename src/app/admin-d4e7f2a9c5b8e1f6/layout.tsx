@@ -2,14 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import {
-  HelpCircle,
-  Menu,
-  X,
-  ChartPie,
-  User,
-  GraduationCap,
-} from "lucide-react";
+import { Menu, X, ChartPie, User, GraduationCap } from "lucide-react";
 import Image from "next/image";
 
 const StudentLayout = ({ children }: { children: React.ReactNode }) => {
