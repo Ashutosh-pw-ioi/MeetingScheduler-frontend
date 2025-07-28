@@ -28,6 +28,12 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
       icon: GraduationCap,
       href: "/admin-d4e7f2a9c5b8e1f6/interviewees",
     },
+    {
+      id: "operations",
+      label: "Operations",
+      icon: GraduationCap,
+      href: "/admin-d4e7f2a9c5b8e1f6/operations",
+    }
   ];
 
   const getActiveSection = () => {
