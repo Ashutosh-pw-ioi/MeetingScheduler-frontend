@@ -6,16 +6,20 @@ import SimpleTable from "../../Table/SimpleTable";
 
 interface OperationData {
   applicationId: string;
+  interviewee:string;
   phone:string;
   interviewer: string;
   interviewDate: string;
+  meetingLink:string;
 }
 
 interface OperationTableData {
   applicationId: string;
+  StudentName:string,
   phone:string;
   interviewer: string;
   date: string;
+  MeetingLink:string;
 }
 
 export default function OperationsSection() {
@@ -75,9 +79,11 @@ export default function OperationsSection() {
 
     const transformedData: OperationTableData[] = filteredData.map(item => ({
       applicationId: item.applicationId,
+      StudentName:item.interviewee,
       phone:item.phone,
       interviewer: item.interviewer,
       date: formatToIndianDate(item.interviewDate),
+      MeetingLink:item.meetingLink,
     }));
 
     setTableData(transformedData);
@@ -158,6 +164,7 @@ export default function OperationsSection() {
               data={tableData}
               searchFields={["applicationId", "interviewer"]}
               itemsPerPage={10}
+              hyperlinkFields={["MeetingLink"]}
               onCellClick={(row, column) => {
                 // Handle cell click if needed
                 console.log("Clicked:", row, column);
