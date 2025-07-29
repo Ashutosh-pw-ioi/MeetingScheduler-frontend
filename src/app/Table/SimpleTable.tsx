@@ -1,8 +1,8 @@
-// Table/SimpleTable.tsx - Update the columns generation logic
+// Table/SimpleTable.tsx - Updated with hyperlink field support
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
-import { Search } from "lucide-react";
+import { Search, ExternalLink } from "lucide-react";
 
 export interface TableColumn {
   key: string;
@@ -19,6 +19,7 @@ interface SimpleTableProps {
   itemsPerPage?: number;
   badgeFields?: string[];
   searchFields?: string[];
+  hyperlinkFields?: string[]; // New prop for hyperlink fields
   onCellClick?: (row: TableItem, columnKey: string) => void;
 }
 
@@ -27,6 +28,7 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
   itemsPerPage = 5,
   badgeFields = [],
   searchFields = [],
+  hyperlinkFields = [], // New prop
   onCellClick,
 }) => {
   const columns = useMemo(() => {
@@ -73,11 +75,50 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
     return filteredData.slice(start, start + itemsPerPage);
   }, [filteredData, currentPage, itemsPerPage]);
 
+  // Helper function to render hyperlink
+  const renderHyperlink = (url: string, text?: string) => {
+    if (!url || url === 'N/A' || url === '' || url === 'null' || url === 'undefined') {
+      return (
+        <span className="text-gray-400 text-sm italic">
+          No link available
+        </span>
+      );
+    }
+
+    // Ensure URL has protocol
+    const formattedUrl = url.startsWith('http') ? url : `https://${url}`;
+    const displayText = text || 'Open Link';
+
+    return (
+      <a
+        href={formattedUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-full text-sm font-medium transition-all duration-200 hover:shadow-sm group"
+        onClick={(e) => e.stopPropagation()} // Prevent row click
+      >
+        <span>{displayText}</span>
+        <ExternalLink className="w-3 h-3 group-hover:scale-110 transition-transform" />
+      </a>
+    );
+  };
+
   const renderCell = (item: TableItem, column: TableColumn) => {
     if (column.render) return column.render(item);
 
     const value = item[column.key];
 
+    // Handle hyperlink fields
+    if (hyperlinkFields.includes(column.key)) {
+      // Check if it's a JSX element (already rendered hyperlink)
+      if (React.isValidElement(value)) {
+        return value;
+      }
+      // Otherwise render as hyperlink
+      return renderHyperlink(value);
+    }
+
+    // Handle badge fields
     if (badgeFields.includes(column.key)) {
       return (
         <span className="inline-block px-4 py-1 text-xs rounded-md bg-gray-200">
@@ -99,7 +140,7 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
             placeholder="Search..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 pr-4 py-2 border rounded-lg w-full text-sm text-gray-700 focus:outline-none"
+            className="pl-10 pr-4 py-2 border rounded-lg w-full text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
       </div>
@@ -111,7 +152,7 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className="text-left px-4 py-3 font-medium text-gray-700"
+                  className="text-left px-4 py-3 font-medium text-gray-700 text-sm"
                 >
                   {column.label}
                 </th>
@@ -120,12 +161,19 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
           </thead>
           <tbody className="divide-y divide-gray-200">
             {currentData.map((item, idx) => (
-              <tr key={item.id || idx} className="hover:bg-gray-50 transition">
+              <tr key={item.id || idx} className="hover:bg-gray-50 transition-colors">
                 {columns.map((column) => (
                   <td
                     key={column.key}
-                    className="px-4 py-5 text-gray-600 cursor-pointer"
-                    onClick={() => onCellClick?.(item, column.key)}
+                    className={`px-4 py-5 text-gray-600 ${
+                      hyperlinkFields.includes(column.key) ? '' : 'cursor-pointer'
+                    }`}
+                    onClick={() => {
+                      // Don't trigger onCellClick for hyperlink fields
+                      if (!hyperlinkFields.includes(column.key)) {
+                        onCellClick?.(item, column.key);
+                      }
+                    }}
                   >
                     {renderCell(item, column)}
                   </td>
@@ -136,9 +184,12 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="text-center py-6 text-gray-500 text-sm"
+                  className="text-center py-8 text-gray-500 text-sm"
                 >
-                  No results found.
+                  <div className="flex flex-col items-center gap-2">
+                    <Search className="w-8 h-8 text-gray-300" />
+                    <span>No results found</span>
+                  </div>
                 </td>
               </tr>
             )}
@@ -147,25 +198,29 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
       </div>
 
       {filteredData.length > itemsPerPage && (
-        <div className="p-4 flex justify-between items-center">
+        <div className="p-4 flex justify-between items-center border-t bg-gray-50">
           <p className="text-sm text-gray-600">
-            Page {currentPage} of{" "}
-            {Math.ceil(filteredData.length / itemsPerPage)}
+            Showing {((currentPage - 1) * itemsPerPage) + 1} to{" "}
+            {Math.min(currentPage * itemsPerPage, filteredData.length)} of{" "}
+            {filteredData.length} results
           </p>
           <div className="flex space-x-2">
             <button
               disabled={currentPage === 1}
               onClick={() => setCurrentPage((prev) => prev - 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer bg-black text-white"
+              className="px-4 py-2 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors text-sm font-medium"
             >
               Previous
             </button>
+            <span className="px-3 py-2 text-sm text-gray-600">
+              Page {currentPage} of {Math.ceil(filteredData.length / itemsPerPage)}
+            </span>
             <button
               disabled={
                 currentPage === Math.ceil(filteredData.length / itemsPerPage)
               }
               onClick={() => setCurrentPage((prev) => prev + 1)}
-              className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer bg-black text-white"
+              className="px-4 py-2 border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors text-sm font-medium"
             >
               Next
             </button>
