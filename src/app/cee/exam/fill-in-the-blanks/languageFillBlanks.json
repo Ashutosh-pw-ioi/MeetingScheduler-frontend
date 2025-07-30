@@ -1,0 +1,23 @@
+[
+  {
+    "title": "Paper 1",
+    "id": "language-fb-paper-1",
+    "questions": [
+      {
+        "id": 1,
+        "question": "The plural of 'crisis' is ____.",
+        "answer": "crises"
+      },
+      {
+        "id": 2,
+        "question": "The synonym of 'bright' is ____.",
+        "answer": "brilliant"
+      },
+      {
+        "id": 3,
+        "question": "The antonym of 'generous' is ____.",
+        "answer": "greedy"
+      }
+    ]
+  }
+]

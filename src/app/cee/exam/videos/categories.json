@@ -1,0 +1,46 @@
+{
+  "coding": {
+    "id": "coding",
+    "title": "Ability to Code",
+    "videos": [
+      {
+        "id": "rJN8CaDr8vk",
+        "title": "All About CEE | Crack Coding Aptitude 🔥| Live With Ali Sir",
+        "author": "PW Institute of Innovation"
+      }
+    ]
+  },
+  "language": {
+    "id": "language",
+    "title": "Language Reasoning",
+    "videos": [
+      {
+        "id": "L2dQH0LUn0E",
+        "title": "All About CEE | Crack English Comprehension 🔥 | Live With Kinjal Ma'am",
+        "author": "PW Institute of Innovation"
+      }
+    ]
+  },
+  "analytical": {
+    "id": "analytical",
+    "title": "Analytical Reasoning",
+    "videos": [
+      {
+        "id": "y3JuTcjdNWA",
+        "title": "All About CEE | Crack CEE Reasoning & Aptitude 🔥 | Live With Saurabh Sir",
+        "author": "PW Institute of Innovation"
+      }
+    ]
+  },
+  "aptitude": {
+    "id": "aptitude",
+    "title": "Aptitude",
+    "videos": [
+      {
+        "id": "y3JuTcjdNWA",
+        "title": "All About CEE | Crack CEE Reasoning & Aptitude 🔥 | Live With Saurabh Sir",
+        "author": "PW Institute of Innovation"
+      }
+    ]
+  }
+}

@@ -1,0 +1,197 @@
+[
+    {
+      "title": "Paper 1",
+      "id": "coding-paper-1",
+      "questions": [
+        {
+          "id": 1,
+          "question": "Scenario\n\nImagine you have a pile of plates on a table. You can do the following actions with the plates:\n\t\t● Put a plate on the pile: Add a plate to the top of the pile.\n\t\t● Take a plate off the pile: Remove the plate from the top of the pile.\n\t\t● Check the top plate: See which plate is on top of the pile (the plate that you would remove if you took one off).\n\t\t● Check if the pile is empty: See if there are any plates on the table.\nThe pile of plates works like a stack of dishes at a buffet — you always add and remove plates from the top.\n\nInitial Condition: The pile of plates starts empty.\n\nCommands:\n\t\t1. Put a plate on the pile (color: Red)\n\t\t2. Put a plate on the pile (color: Blue)\n\t\t3. Check the top plate\n\t\t4. Put a plate on the pile (color: Green)\n\t\t5. Take a plate off the pile\n\t\t6. Check the top plate\n\nAfter the 3rd command (Check the top plate), what color is the top plate?",
+          "options": ["Red", "Blue", "Green", "Non of the above"],
+          "answer": "Blue"
+        },
+        {
+          "id": 2,
+          "question": "After the 5th command (Take a plate off the pile), what color is the top plate?",
+          "options": ["Red", "Blue", "Green", "Non of the above"],
+          "answer": "Blue"
+        },
+        {
+          "id": 3,
+          "question": "What is the state of the pile after the 6th command (Check the top plate)?",
+          "options": [
+            "Empty",
+            "Contains one plate (Red)",
+            "Contains two plates (Red and Blue)",
+            "Contains one plate (Blue)"
+          ],
+          "answer": "Contains two plates (Red and Blue)"
+        },
+        {
+          "id": 4,
+          "question": "Queue (Waiting Line)\n\nImagine a queue like a line of people waiting at a bus stop. The first person to get in line is the first one to get on the bus. This is called First In, First Out (FIFO).\n\nScenario\nYou are at a bus stop. The bus can only pick up one person at a time, and they must get on in the order they arrived.\n\t\t● Commands:\n\t\t\t\t1. A person arrives and gets in line (Person A).\n\t\t\t\t2. Another person arrives and gets in line (Person B).\n\t\t\t\t3. The bus arrives and picks up the first person in line.\n\t\t\t\t4. Another person arrives and gets in line (Person C).\n\t\t\t\t5. The bus arrives again and picks up the next person in line.\n\nAfter command 3 (The bus picks up the first person in line), who gets on the bus?",
+          "options": ["Person A", "Person B", "Person C", "No one"],
+          "answer": "Person A"
+        },
+        {
+          "id": 5,
+          "question": "After command 5 (The bus picks up the next person in line), who gets on the bus?",
+          "options": ["Person A", "Person B", "Person C", "No one"],
+          "answer": "Person B"
+        },
+        {
+          "id": 6,
+          "question": "Who is still in the line after all commands are done?",
+          "options": ["Person A", "Person B", "Person C", "No one"],
+          "answer": "Person C"
+        },
+        {
+          "id": 7,
+          "question": "Array (Fixed List of Items)\n\nAn array is like a row of boxes where you can keep items. The boxes are numbered, so you can easily find or change what’s inside any box.\n\nScenario\nYou have a row of 5 boxes numbered from 0 to 4. You can put items into the boxes and check what’s in each box.\n\t\t● Commands:\n\t\t\t\t1. Put \"Apple\" in box 0.\n\t\t\t\t2. Put \"Banana\" in box 2.\n\t\t\t\t3. Check what is in box 0.\n\t\t\t\t4. Put \"Orange\" in box 4.\n\t\t\t\t5. Check what is in box 2.\n\nWhat is in box 0 after command 3 (Check what’s in box 0)?",
+          "options": ["Apple", "Banana", "Orange", "Empty"],
+          "answer": "Apple"
+        },
+        {
+          "id": 8,
+          "question": "What is in box 2 after command 5 (Check what’s in box 2)?",
+          "options": ["Apple", "Banana", "Orange", "Empty"],
+          "answer": "Banana"
+        },
+        {
+          "id": 9,
+          "question": "What is in box 4 after all commands are done?",
+          "options": ["Apple", "Banana", "Orange", "Empty"],
+          "answer": "Orange"
+        },
+        {
+          "id": 10,
+          "question": "Linked List (Chain of Nodes)\n\nA linked list is like a chain of people holding hands, where each person (node) knows the person next to them. If you want to find someone, you have to start at the first person and follow the chain.\n\nScenario\nYou have a chain of people (nodes). Each person holds a card with their name, and they also know who’s next in the line.\n\t\t● Commands:\n\t\t\t\t1. Add \"John\" at the start of the chain.\n\t\t\t\t2. Add \"Sarah\" after John.\n\t\t\t\t3. Add \"Mike\" after Sarah.\n\t\t\t\t4. Check who is at the start of the chain.\n\t\t\t\t5. Remove the first person in the chain.\n\nWho is at the start of the chain after command 4 (Check who is at the start)?",
+          "options": ["John", "Sarah", "Mike", "No one"],
+          "answer": "John"
+        },
+        {
+          "id": 11,
+          "question": "Who is at the start of the chain after command 5 (Remove the first person)?",
+          "options": ["John", "Sarah", "Mike", "No one"],
+          "answer": "Sarah"
+        },
+        {
+          "id": 12,
+          "question": "Who is at the end of the chain after all commands?",
+          "options": ["John", "Sarah", "Mike", "No one"],
+          "answer": "Mike"
+        }
+      ]
+    },
+    {
+      "title": "Paper 2",
+      "id": "coding-paper-2",
+      "scenarios": [
+        {
+          "id": "stack-operations",
+          "title": "Scenario 1: Stack Operations",
+          "description": "You are simulating a browser with tabs. The browser maintains a stack of pages where each new page is opened on top. You can: Open a new page (push to stack), Close current tab (pop from stack), View current tab (peek top), Check if browser is empty. Initial State: Stack is empty. Sequence of Operations: 1. Open 'Home', 2. Open 'Profile', 3. Open 'Settings', 4. View current tab, 5. Close current tab, 6. Open 'Help', 7. Close current tab, 8. Close current tab, 9. View current tab"
+        },
+        {
+          "id": "queue-simulation",
+          "title": "Scenario 2: Queue Simulation",
+          "description": "You are managing a print queue. The printer prints in FIFO order. Users A, B, C, D, and E send print jobs. Operations: 1. A sends a job, 2. B sends a job, 3. Print a job, 4. C sends a job, 5. D sends a job, 6. Print a job, 7. E sends a job, 8. Print a job"
+        },
+        {
+          "id": "array-manipulation",
+          "title": "Scenario 3: Array Manipulation",
+          "description": "You are managing a 1D array of size 6. Initialize with zeros. Operations: 1. Set arr[2] = 9, 2. Set arr[5] = arr[2] + 1, 3. Set arr[0] = arr[5] - 3, 4. Set arr[1] = arr[0] + arr[2], 5. Set arr[4] = arr[1] - arr[5], 6. Print arr"
+        },
+        {
+          "id": "linked-list",
+          "title": "Scenario 4: Linked List Modification",
+          "description": "You're managing a singly linked list with operations: Add at head, Add after a specific node, Delete a node by value, Traverse list. Operations: 1. Add 50 at head, 2. Add 30 at head, 3. Add 40 after 30, 4. Add 60 after 50, 5. Delete 30, 6. Traverse the list (Head to Tail)"
+        }
+      ],
+      "questions": [
+        {
+          "id": "1.1",
+          "scenarioRef": "stack-operations",
+          "question": "What page is currently open after step 4?",
+          "options": ["Home", "Profile", "Settings", "Help"],
+          "answer": "Settings"
+        },
+        {
+          "id": "1.2",
+          "scenarioRef": "stack-operations",
+          "question": "What page is on top after step 9?",
+          "options": ["Home", "Profile", "Help", "Empty"],
+          "answer": "Home"
+        },
+        {
+          "id": "1.3",
+          "scenarioRef": "stack-operations",
+          "question": "What is the stack content after all 9 steps (bottom to top)?",
+          "options": ["[Home]", "[Home, Profile]", "[Profile]", "[]"],
+          "answer": "[Home]"
+        },
+        {
+          "id": "2.1",
+          "scenarioRef": "queue-simulation",
+          "question": "Whose job was printed second?",
+          "options": ["A", "B", "C", "D"],
+          "answer": "B"
+        },
+        {
+          "id": "2.2",
+          "scenarioRef": "queue-simulation",
+          "question": "Whose jobs are still in the queue?",
+          "options": ["D and E", "C, D, E", "B, C", "C, E"],
+          "answer": "D and E"
+        },
+        {
+          "id": "2.3",
+          "scenarioRef": "queue-simulation",
+          "question": "What is the order of the remaining jobs?",
+          "options": ["D, E", "E, D", "C, D", "E, C"],
+          "answer": "D, E"
+        },
+        {
+          "id": "3.1",
+          "scenarioRef": "array-manipulation",
+          "question": "What is the value at index 5?",
+          "options": ["10", "9", "12", "11"],
+          "answer": "10"
+        },
+        {
+          "id": "3.2",
+          "scenarioRef": "array-manipulation",
+          "question": "What is the final value of arr[1]?",
+          "options": ["9", "15", "13", "17"],
+          "answer": "16"
+        },
+        {
+          "id": "3.3",
+          "scenarioRef": "array-manipulation",
+          "question": "What is the array after step 6?",
+          "options": ["[7, 16, 9, 0, 6, 10]", "[6, 15, 9, 0, 5, 10]", "[7, 16, 9, 0, 6, 11]", "[7, 15, 9, 0, 5, 10]"],
+          "answer": "[7, 16, 9, 0, 6, 10]"
+        },
+        {
+          "id": "4.1",
+          "scenarioRef": "linked-list",
+          "question": "What is the head node after all operations?",
+          "options": ["30", "40", "50", "60"],
+          "answer": "40"
+        },
+        {
+          "id": "4.2",
+          "scenarioRef": "linked-list",
+          "question": "What is the full list after traversal?",
+          "options": ["30 -> 40 -> 50 -> 60", "40 -> 50 -> 60", "30 -> 40 -> 60", "40 -> 60 -> 50"],
+          "answer": "40 -> 50 -> 60"
+        },
+        {
+          "id": "4.3",
+          "scenarioRef": "linked-list",
+          "question": "Which node(s) were directly affected by deletion?",
+          "options": ["30 only", "30 and 40", "30 and 50", "30 and 60"],
+          "answer": "30 and 40"
+        }
+      ]
+    }
+  ]
