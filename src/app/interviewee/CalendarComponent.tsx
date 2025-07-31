@@ -86,7 +86,7 @@ export default function CalendarComponent({
         highlighted: "bg-gray-100 text-gray-900",
         today: "underline",
       }}
-      disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+      disabled={(date) => date <= new Date(new Date().setHours(0, 0, 0, 0))}
     />
   );
 }

@@ -6,13 +6,19 @@ import RightPane from "./RightPane";
 import SlotsPane from "./SlotsPane";
 import SuccessComponent from "./SuccessComponent";
 
-export default function InterviewScheduler() {
+interface FormData {
+  name: string;
+  email: string;
+  phone: string;
+}
+
+export default function InterviewInterface() {
   const [isSlotsPane, setIsSlotsPane] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [isBookingConfirmed, setIsBookingConfirmed] = useState(false);
 
-  const [appointmentData, setAppointmentData] = useState<string | null>(null);
-  const [interviewFormData, setInterviewFormData] = useState<string | null>(
+  const [_interviewFormData, setInterviewFormData] = useState<string | null>(
     null
   );
 
@@ -24,25 +30,25 @@ export default function InterviewScheduler() {
     checkScreenSize();
     window.addEventListener("resize", checkScreenSize);
 
-    const storedAppointment = localStorage.getItem("appointmentData");
     const storedForm = localStorage.getItem("interviewFormData");
+    const storedBookingStatus = localStorage.getItem("bookingConfirmed");
 
-    setAppointmentData(storedAppointment);
     setInterviewFormData(storedForm);
+    setIsBookingConfirmed(storedBookingStatus === "true");
 
     return () => {
       window.removeEventListener("resize", checkScreenSize);
     };
   }, []);
 
-  const handleDateClick = (clickedDate: Date) => {
+  const handleDateClick = (clickedDate: Date, userData: FormData) => {
     setIsSlotsPane(true);
     setSelectedDate(clickedDate);
     localStorage.setItem("selectedDate", clickedDate.toDateString());
+    localStorage.setItem("interviewFormData", JSON.stringify(userData));
   };
 
   const refreshLocalStorageData = () => {
-    setAppointmentData(localStorage.getItem("appointmentData"));
     setInterviewFormData(localStorage.getItem("interviewFormData"));
   };
 
@@ -50,7 +56,7 @@ export default function InterviewScheduler() {
     <div className="min-h-screen px-4 sm:p-4 flex items-center justify-center bg-[#fafafa]">
       <div
         className={`${
-          appointmentData && interviewFormData
+          isBookingConfirmed
             ? "max-w-4xl"
             : isSlotsPane
             ? "max-w-5xl"
@@ -59,7 +65,7 @@ export default function InterviewScheduler() {
       >
         <div
           className={`grid grid-cols-1 ${
-            appointmentData && interviewFormData
+            isBookingConfirmed
               ? "lg:grid-cols-2"
               : isSlotsPane
               ? "lg:grid-cols-[1fr_1.25fr_0.75fr]"
@@ -68,7 +74,7 @@ export default function InterviewScheduler() {
         >
           <LeftPane />
 
-          {appointmentData && interviewFormData ? (
+          {isBookingConfirmed ? (
             <SuccessComponent />
           ) : (
             <>
