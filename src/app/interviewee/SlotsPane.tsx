@@ -371,7 +371,7 @@ export default function SlotsPane({
           </h2>
         </div>
 
-        <div className="flex flex-col gap-2 overflow-y-scroll w-full max-h-[375px]">
+        <div className="flex flex-col gap-2 overflow-y-scroll w-full max-h-[450px]">
           {availableSlots.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               {selectedDate
