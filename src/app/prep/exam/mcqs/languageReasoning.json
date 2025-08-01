@@ -1,0 +1,246 @@
+[
+  {
+    "title": "Paper 1",
+    "id": "language-paper-1",
+    "scenarios": [
+      {
+        "id": "statement-1",
+        "title": "9. Statement:",
+        "description": "Some cats are animals. All animals have eyes."
+      }
+    ],
+    "questions": [
+      {
+        "id": 1,
+        "question": "Read the following passage and answer the question.\n\n\"Ravi wakes up early every morning and goes for a jog in the park. He enjoys listening to the birds and watching the sunrise. After jogging, he spends some time reading the newspaper\"\n\nWhat is Ravi's morning routine?",
+        "options": [
+          "Jogging, birdwatching, and reading the newspaper",
+          "Sleeping late and watching TV",
+          "Jogging in the evening and reading novels",
+          "Cooking breakfast and going to the park"
+        ],
+        "answer": "Jogging, birdwatching, and reading the newspaper"
+      },
+      {
+        "id": 2,
+        "question": "Choose the correct synonym for the word \"abundant\" in the sentence below.\n\n\"The farmer's field was abundant with crops this year\"",
+        "options": ["Scarce", "Plentiful", "Barren", "Minimal"],
+        "answer": "Plentiful"
+      },
+      {
+        "id": 3,
+        "question": "Identify the incorrect statement about the passage below.\n\n\"The internet has revolutionized how people communicate. Emails, social media, and video calls allow individuals to connect instantly, no matter where they are in the world. However, this advancement has also raised concerns about data privacy and screen addiction.\"",
+        "options": [
+          "The internet has made global communication faster.",
+          "Screen addiction is a concern caused by internet usage.",
+          "Data privacy is no longer a concern with internet communication.",
+          "Social media is a tool for instant communication."
+        ],
+        "answer": "Data privacy is no longer a concern with internet communication."
+      },
+      {
+        "id": 4,
+        "question": "Fill in the blank with the most appropriate option.\n\n\"Despite the unexpected rain, the match ___ on as scheduled.\"",
+        "options": ["continues", "continued", "is continuing", "will continue"],
+        "answer": "continued"
+      },
+      {
+        "id": 5,
+        "question": "Choose the most logical conclusion based on the passage below:\n\n\"As more people adopt electric vehicles (EVs), the demand for charging stations is expected to grow. Governments are investing heavily in infrastructure to meet this demand.\"",
+        "options": [
+          "EVs do not require charging infrastructure.",
+          "The popularity of EVs may decrease in the future.",
+          "More charging stations will encourage the use of EVs.",
+          "Governments are reducing investment in EVs."
+        ],
+        "answer": "More charging stations will encourage the use of EVs."
+      },
+      {
+        "id": 6,
+        "question": "Which sentence best explains the author’s perspective in the passage below?\n\n\"Education is a powerful tool for social change. It can reduce inequality, empower individuals, and foster innovation. Countries that prioritize education often experience economic growth and societal progress.\"",
+        "options": [
+          "The author is indifferent about education's role in societal progress.",
+          "The author believes education is essential for both individuals and societies.",
+          "The author criticizes countries that invest in education.",
+          "The author suggests education has limited influence on innovation."
+        ],
+        "answer": "The author believes education is essential for both individuals and societies."
+      },
+      {
+        "id": 7,
+        "question": "Analyze the purpose of the sentence below in the context of the paragraph.\n\n\"While smartphones provide convenience, they also lead to distractions that can affect productivity.\"",
+        "options": [
+          "To highlight the primary benefit of smartphones",
+          "To present a balanced view of smartphones' impact",
+          "To argue against the use of smartphones in daily life",
+          "To suggest ways to improve smartphone productivity"
+        ],
+        "answer": "To present a balanced view of smartphones' impact"
+      },
+      {
+        "id": 8,
+        "question": "What can be inferred from the following passage?\n\n\"In recent years, companies have adopted flexible work policies. Employees are given the choice to work from home or come to the office. Surveys show that many prefer a hybrid model, combining both options.\"",
+        "options": [
+          "Employees no longer want to work from the office.",
+          "Flexible work policies lead to lower productivity.",
+          "Hybrid work models appeal to many employees.",
+          "Companies are eliminating office spaces entirely."
+        ],
+        "answer": "Hybrid work models appeal to many employees."
+      },
+      {
+        "id": 9,
+        "question": "Choose the correct preposition to complete the sentence:\n\n\"The teacher explained the lesson ___ great detail.\"",
+        "options": ["with", "in", "on", "at"],
+        "answer": "in"
+      },
+      {
+        "id": 10,
+        "question": "Identify the grammatically correct sentence:",
+        "options": [
+          "She has went to the market.",
+          "He have been working hard all day.",
+          "They were playing in the park yesterday.",
+          "I has seen this movie before."
+        ],
+        "answer": "They were playing in the park yesterday."
+      },
+      {
+        "id": 11,
+        "question": "What is the logical connection between these two sentences?\n\n\"The weather forecast predicted heavy rain tomorrow.\"\n\"As a result, the cricket match may be postponed.\"",
+        "options": ["Contradiction", "Cause and effect", "Comparison", "Generalization"],
+        "answer": "Cause and effect"
+      },
+      {
+        "id": 12,
+        "question": "Find the odd one out:",
+        "options": ["Triangle", "Circle", "Rectangle", "Cube"],
+        "answer": "Cube"
+      },
+      {
+        "id": 13,
+        "question": "Which word best completes the analogy?\n\n\"Teacher is to school as doctor is to ___.\"",
+        "options": ["Hospital", "Medicine", "Patient", "Nurse"],
+        "answer": "Hospital"
+      },
+      {
+        "id": 14,
+        "question": "Determine the conclusion that logically follows from the statements below:\n\nStatement 1: Some musicians are composers.\nStatement 2: All composers are creative.\nWhich of the following conclusions is valid?",
+        "options": [
+          "All musicians are creative.",
+          "Some musicians are not creative.",
+          "Some musicians are creative.",
+          "All composers are musicians."
+        ],
+        "answer": "Some musicians are creative."
+      },
+      {
+        "id": 15,
+        "question": "Evaluate the following statement:\n\n\"If all poets are creative and some writers are poets, then which of the following must be true?\"",
+        "options": [
+          "All writers are creative.",
+          "Some creative people are writers.",
+          "All poets are writers.",
+          "Some writers are not creative."
+        ],
+        "answer": "Some creative people are writers."
+      }
+    ]
+  },
+  {
+    "title": "Paper 2",
+    "id": "language-paper-2",
+    "scenarios": [
+      {
+        "id": "statement-1",
+        "title": "9. Statement:",
+        "description": "Some cats are animals. All animals have eyes."
+      }
+    ],
+    "questions": [
+      {
+        "id": 1,
+        "question": "Ravi ___ to school every day.",
+        "options": ["go", "goes", "gone", "going"],
+        "answer": "goes"
+      },
+      {
+        "id": 2,
+        "question": "Choose the synonym for 'generous':",
+        "options": ["Stingy", "Kind", "Mean", "Rude"],
+        "answer": "Kind"
+      },
+      {
+        "id": 3,
+        "question": "Identify the error:\n“She have completed the task.”",
+        "options": ["She", "have", "completed", "the"],
+        "answer": "have"
+      },
+      {
+        "id": 4,
+        "question": "Fill in the blank: “He is good ___ maths.”",
+        "options": ["on", "in", "at", "by"],
+        "answer": "at"
+      },
+      {
+        "id": 5,
+        "question": "Which is a cause and effect pair?",
+        "options": [
+          "It rained – the match was cancelled",
+          "He is tall – he eats rice",
+          "She sings – she dances",
+          "They won – they cried"
+        ],
+        "answer": "It rained – the match was cancelled"
+      },
+      {
+        "id": 6,
+        "question": "Which best describes the mood?",
+        "options": ["Sad", "Tense", "Joyful", "Angry"],
+        "answer": "Joyful"
+      },
+      {
+        "id": 7,
+        "question": "Odd one out:",
+        "options": ["Knife", "Fork", "Spoon", "Plate"],
+        "answer": "Plate"
+      },
+      {
+        "id": 8,
+        "question": "Teacher: Classroom :: Doctor : ?",
+        "options": ["Medicine", "Nurse", "Hospital", "Patient"],
+        "answer": "Hospital"
+      },
+      {
+        "id": "9.1",
+        "scenarioRef": "statement-1",
+        "question": "Conclusion:",
+        "options": [
+          "All cats have eyes",
+          "Some animals are cats",
+          "Both A and B",
+          "None"
+        ],
+        "answer": "Both A and B"
+      },
+      {
+        "id": 10,
+        "question": "Correct sentence:",
+        "options": ["They was running", "He are happy", "I am going", "She were dancing"],
+        "answer": "I am going"
+      },
+      {
+        "id": 11,
+        "question": "Synonym of “brief”:",
+        "options": ["Long", "Short", "Deep", "Vast"],
+        "answer": "Short"
+      },
+      {
+        "id": 12,
+        "question": "Choose correct analogy: Book is to Reading as Fork is to:",
+        "options": ["Drawing", "Eating", "Stirring", "Cooking"],
+        "answer": "Eating"
+      }
+    ]
+  }
+]
