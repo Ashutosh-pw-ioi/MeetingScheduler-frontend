@@ -1,0 +1,23 @@
+[
+  {
+    "title": "Paper 1",
+    "id": "aptitude-fb-paper-1",
+    "questions": [
+      {
+        "id": 1,
+        "question": "25% of 200 is ____.",
+        "answer": "50"
+      },
+      {
+        "id": 2,
+        "question": "If x + 3 = 7, then x = ____.",
+        "answer": "4"
+      },
+      {
+        "id": 3,
+        "question": "The area of a circle with radius 7 is ____ (π = 22/7).",
+        "answer": "154"
+      }
+    ]
+  }
+]

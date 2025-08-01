@@ -1,0 +1,170 @@
+[
+  {
+    "title": "Paper 1",
+    "id": "aptitude-paper-1",
+    "questions": [
+      {
+        "id": 1,
+        "question": "In a 1000 m race, A wins over B by 150 m and in the same race C can give a startup of 250 m to B. By how much distance A gives a start to C, so that A beats C by 200 metres in a race of 1000 m?",
+        "options": ["162.5 m", "160.5 m", "155 m", "200 m"],
+        "answer": "162.5 m"
+      },
+      {
+        "id": 2,
+        "question": "A person sold a clock at a loss of 20%. If he had sold the clock for ₹20 more, then he would have got a gain of 20%. The cost price of the clock is?",
+        "options": ["₹45", "₹50", "₹60", "₹55"],
+        "answer": "₹50"
+      },
+      {
+        "id": 3,
+        "question": "The sum of squares of three positive numbers is 2100.\nThe ratio of the first number to the second number is 2:1,\nand the ratio of the second number to the third number is 2:1.\nWhat is the second number?",
+        "options": ["40", "20", "10", "50"],
+        "answer": "20"
+      },
+      {
+        "id": 4,
+        "question": "In an examination, the average marks of students were found to be 70. Due to a data entry error, the marks of 30 candidates were incorrectly recorded as 90 each instead of their actual scores, i.e., 50. After correcting these marks, the average marks of all the students came down to 65. How many students appeared for the examination?",
+        "options": ["100", "120", "240", "300"],
+        "answer": "240"
+      },
+      {
+        "id": 5,
+        "question": "A sum of money becomes four times at the simple interest rate of 5% per annum. At what rate would the sum have become ten times in the same time?",
+        "options": ["10", "25", "20", "15"],
+        "answer": "15"
+      },
+      {
+        "id": 6,
+        "question": "Find the four consecutive numbers in an increasing arithmetic progression (AP)\nsuch that their sum is 180 and the product of the first and last numbers is 200 less than the product of the middle two numbers.",
+        "options": ["15, 35, 55, 75", "35, 45, 65, 85", "30, 40, 50, 60", "20, 40, 50, 70"],
+        "answer": "30, 40, 50, 60"
+      },
+      {
+        "id": 8,
+        "question": "Let x, y ∊ N and 4x + 15y = 270. The number of solutions is:",
+        "options": ["15", "4", "6", "infinite"],
+        "answer": "4"
+      },
+      {
+        "id": 9,
+        "question": "In a Triangle ABC, ∠B = ∠C = 50°. Line BA is produced up to D such that BA = AD. Find the value of ∠BCD.",
+        "options": ["60°", "30°", "90°", "40°"],
+        "answer": "30°"
+      },
+      {
+        "id": 10,
+        "question": "A rectangular field costs Rs. 288 for leveling at 50 paise per square metre. If the ratio of length and breadth of the field is 9:4, find the breadth of the field.",
+        "options": ["16 m", "28 m", "44 m", "None of these"],
+        "answer": "16 m"
+      },
+      {
+        "id": 11,
+        "question": "The total number of arrangements that can be made out of the letters of the word \"ATLANTA\" without altering the relative positions of vowels and consonants is:",
+        "options": ["24", "64", "1028", "128"],
+        "answer": "24"
+      },
+      {
+        "id": 12,
+        "question": "A three-digit number is formed using the digits from 1, 2, 5, 7 randomly without repetition. What is the chance that this number is divisible by 3?",
+        "options": ["7/9", "1/9", "2/9", "None of the above"],
+        "answer": "2/9"
+      },
+      {
+        "id": 13,
+        "question": "If P24100Q is completely divisible by 88, find the value of P+Q (where P and Q are natural numbers).",
+        "options": ["10", "15", "20", "13"],
+        "answer": "15"
+      },
+      {
+        "id": 14,
+        "question": "Consider the given sets:\nA = {5,10,15,20,25,30,35,40}\nB = {10,20,30,40,50,60,70}\nWhat is the ratio of number of elements in (A ∩ B) and (A ∪ B)?",
+        "options": ["1 : 3", "4 : 11", "5 : 12", "1 : 2"],
+        "answer": "4 : 11"
+      },
+      {
+        "id": 15,
+        "question": "Find the least number which when divided by 4, 5, 6 and 7 leaves a remainder of 3, but when divided by 3 leaves no remainder.",
+        "options": ["423", "213", "217", "417"],
+        "answer": "423"
+      }
+    ]
+  },
+  {
+    "title": "Paper 2",
+    "id": "aptitude-paper-2",
+    "questions": [
+      {
+        "id": 13,
+        "question": "A man buys a watch for ₹500 and sells it for ₹650. Find his profit percentage.",
+        "options": ["25%", "30%", "35%", "40%"],
+        "answer": "30%"
+      },
+      {
+        "id": 14,
+        "question": "If √(x + 9) = 5, find the value of x.",
+        "options": ["16", "25", "15", "18"],
+        "answer": "16"
+      },
+      {
+        "id": 15,
+        "question": "Solve for x: (x – 3)(x + 4) = 0",
+        "options": ["3 and –4", "–3 and 4", "3 and 4", "–3 and –4"],
+        "answer": "3 and –4"
+      },
+      {
+        "id": 16,
+        "question": "In a group of 60 students, 40 play football, 30 play cricket, and 10 play neither. How many play both?",
+        "options": ["10", "20", "30", "15"],
+        "answer": "10"
+      },
+      {
+        "id": 17,
+        "question": "What is the average of first 10 natural numbers?",
+        "options": ["5", "5.5", "6", "6.5"],
+        "answer": "5.5"
+      },
+      {
+        "id": 18,
+        "question": "A sum of ₹10,000 is invested at 10% simple interest for 3 years. Find the interest.",
+        "options": ["₹3000", "₹3300", "₹3500", "₹3700"],
+        "answer": "₹3000"
+      },
+      {
+        "id": 19,
+        "question": "A train travels at 72 km/h. How many meters does it cover in 25 seconds?",
+        "options": ["500", "600", "650", "700"],
+        "answer": "500"
+      },
+      {
+        "id": 20,
+        "question": "The average age of 5 members of a family is 28 years. The youngest member is 8 years old. What is the average age of the remaining four?",
+        "options": ["30", "32.5", "31", "34"],
+        "answer": "32.5"
+      },
+      {
+        "id": 21,
+        "question": "What is the area of a circle whose radius is 7 cm? (Use π = 22/7)",
+        "options": ["154 cm²", "144 cm²", "138 cm²", "164 cm²"],
+        "answer": "154 cm²"
+      },
+      {
+        "id": 22,
+        "question": "The diagonals of a rhombus are 10 cm and 24 cm. Find its area.",
+        "options": ["120 cm²", "100 cm²", "110 cm²", "130 cm²"],
+        "answer": "120 cm²"
+      },
+      {
+        "id": 23,
+        "question": "If the perimeter of a square is 40 cm, what is the length of one side?",
+        "options": ["5", "10", "15", "20"],
+        "answer": "10"
+      },
+      {
+        "id": 24,
+        "question": "In a 30-question test, each correct answer gives 4 marks, and each wrong deducts 1 mark. If a student scores 80 marks and attempted all questions, how many were correct?",
+        "options": ["22", "23", "24", "25"],
+        "answer": "23"
+      }
+    ]
+  }
+]

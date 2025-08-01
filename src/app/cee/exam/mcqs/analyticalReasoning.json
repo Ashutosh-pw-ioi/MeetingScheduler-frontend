@@ -1,0 +1,164 @@
+[
+  {
+    "title": "Paper 1",
+    "id": "reasoning-paper-1",
+    "questions": [
+      {
+        "id": 1,
+        "question": "A woman is looking at a picture. In the picture, there are two people: a man and a woman. The man is the son of the woman in the picture. If the woman in the picture is the mother of the woman looking at the picture, how is the man related to the woman looking at the picture?",
+        "options": ["Brother in Law", "Father in law", "Brother", "Cannot be determined"],
+        "answer": "Brother"
+      },
+      {
+        "id": 4,
+        "question": "Consider the following statements.\n1. All Augusts are September.\n2. No September is October.\n3. All Octobers are November.\n4. Some Septembers are July.\n\nConclusion – I: Some Augusts are November.\nConclusion – II: Some Novembers are July.\n\nWhich of the following options is correct?",
+        "options": [
+          "Only Conclusion – I follows.",
+          "Only Conclusion – II follows.",
+          "Both Conclusion – I and Conclusion – II follows.",
+          "Neither Conclusion – I nor Conclusion – II follows."
+        ],
+        "answer": "Neither Conclusion – I nor Conclusion – II follows."
+      },
+      {
+        "id": 6,
+        "question": "In a code language 'EINSTEIN' is written as 'DJMTSFHO'. How is 'RUTHERFORD' written in that code language?",
+        "options": ["SVUIFSGPSE", "SWUJDTFQTD", "QUSJDSDPRC", "QVSIDSEPQE"],
+        "answer": "QVSIDSEPQE"
+      },
+      {
+        "id": 7,
+        "question": "Find the next term of the given sequence\n15, 8, 9, 15, 32, …",
+        "options": ["77.5", "80", "82.5", "85"],
+        "answer": "80"
+      },
+      {
+        "id": 8,
+        "question": "Amit is 40 m South-West of Basu. Chetan is 40 m South-East of Basu. Then, Chetan is in which direction of Amit?",
+        "options": ["East", "West", "North-east", "South"],
+        "answer": "East"
+      },
+      {
+        "id": 9,
+        "question": "Consider the following statements.\n1. Some Rains are Sky.\n2. All Roads are Plain.\n3. Some Plain are Sky.\n\nConclusion – I: Some Rains are not Plain.\nConclusion – II: Some Sky can be Road.\n\nWhich of the following options is correct?",
+        "options": [
+          "Only Conclusion – I follows.",
+          "Only Conclusion – II follows.",
+          "Both Conclusion – I and Conclusion – II follows.",
+          "Neither Conclusion – I nor Conclusion – II follows."
+        ],
+        "answer": "Neither Conclusion – I nor Conclusion – II follows."
+      },
+      {
+        "id": 10,
+        "question": "Three Intelligent students have been given 14 chocolates in total.\nThey were asked about the number of chocolates given to each.\nNone of them wanted to disclose the exact number of chocolates.\nHence they made the following statements:\nA: I know that ‘B’ and ‘C’ definitely have different numbers of chocolates.\nB: I already knew that all of us have different numbers of chocolates.\nC: Now, I know the exact number of chocolates with each one of us.\n\nCan you guess how many chocolates A, B, and C have?",
+        "options": ["1, 7, 6", "3, 7, 4", "3, 9, 2", "1, 11, 2"],
+        "answer": "3, 7, 4"
+      },
+      {
+        "id": 11,
+        "question": "64 balls are there in a bag. One of the balls is heavier than the others (defective ball). You are provided a weighing balance. What is the minimum number of weighings required to find out the heavier ball?",
+        "options": ["6", "5", "4", "None of these"],
+        "answer": "6"
+      },
+      {
+        "id": 14,
+        "question": "In the following addition every alphabet represents a distinct digit.\nFind the value of P and E.\n\n\tU S S R\n\t+ U S A\n_________\n\tP E A C E",
+        "options": ["1, 0", "1, 9", "2, 3", "2, 9"],
+        "answer": "1, 9"
+      },
+      {
+        "id": 15,
+        "question": "There are 32 players in a knockout tournament.\nIn a knockout tournament, if a player loses a match, he/she is out of the tournament.\nThere are no draws in the tournament.\n\nHow many matches need to be conducted to decide the winner of the tournament?",
+        "options": ["16", "31", "30", "17"],
+        "answer": "31"
+      }
+    ]
+  },
+  {
+    "title": "Paper 2",
+    "id": "reasoning-paper-2",
+    "scenarios": [
+      {
+        "id": "statement-1",
+        "title": "3. Statement:",
+        "description": "All roses are flowers. Some flowers are tulips.  Conclusions: I. Some roses are tulips. II. All tulips are flowers."
+      }
+    ],
+    "questions": [
+      {
+        "id": 1,
+        "question": "Point A is to the north of point B. Point C is to the east of B. Point D is to the north of C. If point A is directly west of D, then in which direction is B with respect to D?",
+        "options": ["North-west", "South-east", "South-west", "North-east"],
+        "answer": "South-west"
+      },
+      {
+        "id": 2,
+        "question": "Six people are sitting in a circle. A is to the left of B, who is opposite C. D is between C and E. Who is sitting to the right of A?",
+        "options": ["D", "C", "F", "E"],
+        "answer": "F"
+      },
+      {
+        "id": "3.1",
+        "scenarioRef": "statement-1",
+        "question": "Which of the following statements is true?",
+        "options": ["Only I follows", "Only II follows", "Both follow", "None follows"],
+        "answer": "Only II follows"
+      },
+      {
+        "id": 4,
+        "question": "Find the missing term in the series: 4, 9, 19, 39, ?, 159",
+        "options": ["79", "81", "89", "99"],
+        "answer": "79"
+      },
+      {
+        "id": 5,
+        "question": "If in a certain code language, WATER is written as VZUDQ, how will PLANT be written?",
+        "options": ["OKZMS", "OMZMS", "OKZLR", "QMBOS"],
+        "answer": "OKZMS"
+      },
+      {
+        "id": 6,
+        "question": "In a row of students, Rina is 14th from the left and 10th from the right. How many students are there in the row?",
+        "options": ["24", "23", "25", "22"],
+        "answer": "23"
+      },
+      {
+        "id": 7,
+        "question": "A clock shows 3:15. What is the angle between the hour and minute hands?",
+        "options": ["0°", "7.5°", "15°", "30°"],
+        "answer": "7.5°"
+      },
+      {
+        "id": 8,
+        "question": "Five people – A, B, C, D, and E – live on five different floors of a building.\n• A lives above B but below C.\n• D lives above C.\n• E lives below B.\nWho lives on the top floor?",
+        "options": ["A", "B", "C", "D"],
+        "answer": "D"
+      },
+      {
+        "id": 9,
+        "question": "A man walks 3 km north, turns right, walks 4 km, turns right again, walks 3 km. How far is he from the starting point?",
+        "options": ["3 km", "4 km", "5 km", "7 km"],
+        "answer": "4 km"
+      },
+      {
+        "id": 10,
+        "question": "The sum of ages of A and B is 45. Five years ago, A was twice as old as B. Find B’s current age.",
+        "options": ["20", "25", "15", "30"],
+        "answer": "15"
+      },
+      {
+        "id": 11,
+        "question": "A shopkeeper sells a product at 20% profit. If the cost price is increased by 10%, and the selling price remains the same, what is the new profit percentage?",
+        "options": ["8%", "10%", "9.09%", "6.67%"],
+        "answer": "8%"
+      },
+      {
+        "id": 12,
+        "question": "A can do a piece of work in 10 days, B in 15 days. How many days will it take to complete the work together?",
+        "options": ["6", "7", "8", "9"],
+        "answer": "6"
+      }
+    ]
+  }
+]

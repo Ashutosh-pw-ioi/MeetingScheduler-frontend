@@ -1,0 +1,23 @@
+[
+  {
+    "title": "Paper 1",
+    "id": "reasoning-fb-paper-1",
+    "questions": [
+      {
+        "id": 1,
+        "question": "The next number in the series 2, 4, 8, 16, ____ is 32.",
+        "answer": "32"
+      },
+      {
+        "id": 2,
+        "question": "Find the odd one out: Apple, Banana, Carrot, Mango. Answer: ____.",
+        "answer": "Carrot"
+      },
+      {
+        "id": 3,
+        "question": "If A > B and B > C, then the shortest is ____.",
+        "answer": "C"
+      }
+    ]
+  }
+]
