@@ -1,4 +1,5 @@
-// types/dashboard.types.ts
+// src/types/dashboard.types.ts
+
 export interface MetricData {
   title: string;
   value: number | string;
@@ -20,10 +21,23 @@ export interface BarChartDataPoint {
   interviews: number;
 }
 
+export interface DailyBreakdown {
+  date: string;
+  totalSlots: number;
+  bookedSlots: number;
+  availableSlots: number;
+  bookingRate: string;
+}
+
 export interface DashboardResponse {
   metrics: MetricData[];
   pieCharts: PieChartData[];
   barChartData: BarChartDataPoint[];
+  dailyBreakdown?: {
+    today: DailyBreakdown;
+    tomorrow: DailyBreakdown;
+    dayAfterTomorrow: DailyBreakdown;
+  };
 }
 
 export interface ApiResponse<T> {
@@ -38,7 +52,6 @@ export interface ApiError {
   error?: string;
 }
 
-// Transform type for bar chart component
 export interface TransformedBarData {
   category: string;
   value: number;
