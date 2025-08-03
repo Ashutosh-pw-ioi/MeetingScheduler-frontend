@@ -4,6 +4,7 @@ export interface User {
   name: string;
   avatarUrl: string | null;
   calendarConnected: boolean;
+  department: string;
 }
 
 export interface CalendarStatus {
