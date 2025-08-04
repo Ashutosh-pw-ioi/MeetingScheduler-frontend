@@ -40,11 +40,23 @@ export default function AddSlotsSection() {
   const hasInitialized = useRef(false);
   const saveTimeoutRef = useRef<{ [key: string]: NodeJS.Timeout }>({});
 
+  const formatTo12Hour = (hour: number, minute: number) => {
+    const period = hour >= 12 ? "PM" : "AM";
+    const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+    return `${displayHour}:${minute.toString().padStart(2, "0")} ${period}`;
+  };
+
   const generateTimeOptions = () => {
     const times = [];
-    for (let hour = 9; hour <= 18; hour++) {
+    const rounded = getNextRoundedHalfHour();
+    const [roundedHour, roundedMinute] = rounded.split(":").map(Number);
+    const roundedTotalMinutes = roundedHour * 60 + roundedMinute;
+
+    for (let hour = 0; hour < 24; hour++) {
       for (let minute = 0; minute < 60; minute += 30) {
-        if (hour === 18 && minute > 0) break;
+        const totalMinutes = hour * 60 + minute;
+        if (totalMinutes < roundedTotalMinutes) continue;
+
         const time12 = formatTo12Hour(hour, minute);
         const time24 = `${hour.toString().padStart(2, "0")}:${minute
           .toString()
@@ -52,16 +64,35 @@ export default function AddSlotsSection() {
         times.push({ value: time24, label: time12 });
       }
     }
+
     return times;
   };
 
-  const formatTo12Hour = (hour: number, minute: number) => {
-    const period = hour >= 12 ? "PM" : "AM";
-    const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
-    return `${displayHour}:${minute.toString().padStart(2, "0")} ${period}`;
+  const getNextRoundedHalfHour = () => {
+    const now = new Date();
+    let hour = now.getHours();
+    let minute = now.getMinutes();
+
+    if (minute === 0) {
+      minute = 30;
+    } else if (minute <= 30) {
+      minute = 30;
+    } else {
+      minute = 0;
+      hour += 1;
+    }
+
+    if (hour === 24) hour = 0;
+
+    return `${hour.toString().padStart(2, "0")}:${minute
+      .toString()
+      .padStart(2, "0")}`;
   };
 
   const timeOptions = generateTimeOptions();
+  const roundedStartTime = getNextRoundedHalfHour();
+  const startIndex = timeOptions.findIndex((t) => t.value === roundedStartTime);
+  const nextTimeOption = timeOptions[startIndex + 1] || timeOptions[startIndex];
 
   const validateTimeSlot = (
     startTime: string,
@@ -171,8 +202,8 @@ export default function AddSlotsSection() {
 
     const newSlot: TimeSlot = {
       id: uniqueId,
-      startTime: "09:00",
-      endTime: "09:30",
+      startTime: roundedStartTime,
+      endTime: nextTimeOption.value,
       hasError: false,
       isModified: true,
     };
@@ -463,7 +494,7 @@ export default function AddSlotsSection() {
   }
 
   return (
-    <div className="px-0 sm:px-2 py-6 relative max-w-6xl">
+    <div className="px-2 sm:px-2 py-6 relative max-w-6xl">
       {successMessage && (
         <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
           <div className="flex items-center">

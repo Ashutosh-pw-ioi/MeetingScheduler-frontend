@@ -294,27 +294,17 @@ const InterviewerInterface: React.FC = () => {
                 Track your interview slots and meeting insights
               </p>
             </div>
-            <div className="flex items-center gap-3">
-              {selectedDepartment && selectedDepartment !== "GENERAL" && (
-                <button
-                  onClick={() => setIsDeptModalOpen(true)}
-                  disabled={departmentLoading}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors disabled:opacity-50"
-                >
-                  Change Department
-                </button>
-              )}
-              <button
-                onClick={handleRefresh}
-                disabled={refreshing}
-                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors disabled:opacity-50"
-              >
-                <RefreshCw
-                  className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
-                />
-                <span className="text-sm">Refresh</span>
-              </button>
-            </div>
+
+            <button
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors disabled:opacity-50"
+            >
+              <RefreshCw
+                className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
+              />
+              <span className="text-sm">Refresh</span>
+            </button>
           </div>
         </div>
 

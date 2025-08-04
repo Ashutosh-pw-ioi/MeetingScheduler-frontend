@@ -218,7 +218,7 @@ export default function InterviewersSection() {
             <SimpleTable
               data={tableData}
               searchFields={["name", "email"]}
-              itemsPerPage={5}
+              itemsPerPage={10}
               badgeFields={["availableSlots"]}
               onCellClick={(row, column) => {
                 if (column === "meetings")
