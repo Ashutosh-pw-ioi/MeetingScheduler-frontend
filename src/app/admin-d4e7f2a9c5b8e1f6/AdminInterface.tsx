@@ -1,13 +1,35 @@
+// src/components/AdminOverview.tsx
+
 "use client";
 
-import React from "react";
-import MetricCard from "../overviewComponents/MetricCard";
-import PieChartComponent from "../overviewComponents/PieChartComponent";
-import BarChartComponent from "../overviewComponents/BarChartComponent";
-import { useDashboardData } from "../../hooks/useDashboardData"
+import React, { useState, useMemo } from 'react';
+import MetricCard from '../overviewComponents/MetricCard';
+import PieChartComponent from '../overviewComponents/PieChartComponent';
+import BarChartComponent from '../overviewComponents/BarChartComponent';
+import { useDashboardData } from '../../hooks/useDashboardData';
+import { DailyBreakdown } from '../../types/adminDashboard';
+
+interface DailyDataWithKey extends DailyBreakdown {
+  key: string;
+}
 
 const AdminOverview: React.FC = () => {
   const { dashboardData, transformedBarData, loading, error, refetch } = useDashboardData();
+  const [selectedDate, setSelectedDate] = useState<string>('');
+
+  const dailyArray: DailyDataWithKey[] = useMemo(() => {
+    if (!dashboardData?.dailyBreakdown) return [];
+    return Object.entries(dashboardData.dailyBreakdown).map(([key, value]) => ({
+      key,
+      ...value,
+    }));
+  }, [dashboardData]);
+
+  const allDates = dailyArray.map(d => d.date);
+
+  const selectedDayData = selectedDate
+    ? dailyArray.find(d => d.date === selectedDate)
+    : undefined;
 
   if (loading) {
     return (
@@ -39,19 +61,18 @@ const AdminOverview: React.FC = () => {
   return (
     <div className="min-h-screen p-2 sm:p-4">
       <div className="max-w-7xl mx-auto">
+
+        {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Admin Overview
-          </h1>
-          <p className="text-gray-600 mt-2">
-            System-wide interview insights and stats
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900">Admin Overview</h1>
+          <p className="text-gray-600 mt-2">System-wide interview insights and stats</p>
         </div>
 
+        {/* Row 1: Metric Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-8">
-          {dashboardData.metrics.map((metric, index) => (
+          {dashboardData.metrics.map((metric, idx) => (
             <MetricCard
-              key={index}
+              key={idx}
               title={metric.title}
               value={metric.value}
               subtitle={metric.subtitle}
@@ -59,20 +80,78 @@ const AdminOverview: React.FC = () => {
           ))}
         </div>
 
+        {/* Row 2: Breakdown Section with Date Filter */}
+        <section className="bg-white rounded shadow p-5 flex flex-col justify-between mb-8">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold">
+              {selectedDayData ? `Daily Breakdown for ${selectedDayData.date}` : '3-day Breakdown'}
+            </h3>
+            <div>
+              <select
+                id="dashboard-date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="border border-gray-400 rounded px-2 py-1"
+              >
+                <option value="">All (3 days)</option>
+                {allDates.map((date) => (
+                  <option key={date} value={date}>
+                    {date}
+                  </option>
+                ))}
+              </select>
+              {selectedDate && (
+                <button
+                  onClick={() => setSelectedDate('')}
+                  className="ml-2 px-3 py-1 rounded bg-gray-100 text-gray-700 hover:bg-gray-200"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+          </div>
+
+          {selectedDayData ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>Total Slots: {selectedDayData.totalSlots}</div>
+              <div>Booked Slots: {selectedDayData.bookedSlots}</div>
+              <div>Available Slots: {selectedDayData.availableSlots}</div>
+              <div>Booking Rate: {selectedDayData.bookingRate}</div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {dailyArray.map((day) => (
+                <div
+                  key={day.key}
+                  className="bg-gray-50 rounded-lg p-4 border flex flex-col"
+                >
+                  <span className="font-semibold capitalize text-gray-800 mb-1">{day.date}</span>
+                  <span>Total Slots: {day.totalSlots}</span>
+                  <span>Booked Slots: {day.bookedSlots}</span>
+                  <span>Available Slots: {day.availableSlots}</span>
+                  <span>Booking Rate: {day.bookingRate}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* Row 3: Pie Charts */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-          {dashboardData.pieCharts.map((chart, index) => (
+          {dashboardData.pieCharts.map((chart, idx) => (
             <PieChartComponent
-              key={index}
+              key={idx}
               data={chart.data}
               title={chart.title}
             />
           ))}
         </div>
 
+        {/* Row 4: Bar Chart */}
         <div className="mb-8">
           <BarChartComponent
             data={transformedBarData}
-            title="Weekly Interview Trends"
+            title={"Interview Trends"}
           />
         </div>
       </div>
