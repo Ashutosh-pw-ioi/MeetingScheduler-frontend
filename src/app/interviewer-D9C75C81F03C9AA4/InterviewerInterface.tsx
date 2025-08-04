@@ -8,7 +8,7 @@ import { MetricData, ChartData, WeeklyTrendData } from "../../types/overview";
 import MetricCard from "../overviewComponents/MetricCard";
 import PieChartComponent from "../overviewComponents/PieChartComponent";
 import WeeklyTrendChart from "../overviewComponents/WeeklyTrendChart";
-import { AlertCircle, RefreshCw } from "lucide-react";
+import { AlertCircle, RefreshCw, X } from "lucide-react";
 
 const InterviewerInterface: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -20,7 +20,10 @@ const InterviewerInterface: React.FC = () => {
   const [showCalendarSuccess, setShowCalendarSuccess] =
     useState<boolean>(false);
 
-  // Data states
+  const [isDeptModalOpen, setIsDeptModalOpen] = useState<boolean>(false);
+  const [selectedDepartment, setSelectedDepartment] = useState<string>("");
+  const [departmentLoading, setDepartmentLoading] = useState<boolean>(false);
+
   const [metrics, setMetrics] = useState<MetricData[]>([]);
   const [meetingDistributionData, setMeetingDistributionData] = useState<
     ChartData[]
@@ -38,7 +41,6 @@ const InterviewerInterface: React.FC = () => {
       setError(null);
       console.log("Loading overview data...");
 
-      // Fetch all data in parallel
       const [todaySummary, weeklyTrends, allMeetings] = await Promise.all([
         OverviewService.getTodaySummary(),
         OverviewService.getWeeklyTrends(),
@@ -51,20 +53,16 @@ const InterviewerInterface: React.FC = () => {
         allMeetings,
       });
 
-      // Calculate metrics from today's summary
       const calculatedMetrics = OverviewService.calculateMetrics(todaySummary);
       setMetrics(calculatedMetrics);
 
-      // Calculate meeting distribution from all meetings
       const meetingDistribution =
         OverviewService.calculateMeetingDistribution(allMeetings);
       setMeetingDistributionData(meetingDistribution);
 
-      // Calculate slot status from today's summary
       const slotStatus = OverviewService.calculateSlotStatus(todaySummary);
       setSlotStatusData(slotStatus);
 
-      // Set weekly trends data
       setWeeklyTrendsData(weeklyTrends.weeklyTrends);
 
       console.log("Overview data processed and set to state");
@@ -78,20 +76,25 @@ const InterviewerInterface: React.FC = () => {
     try {
       setLoading(true);
 
-      // Check calendar status
+      const authData = await AuthService.checkAuth();
+      console.log("Auth data:", authData);
+      if (authData && authData.department === "GENERAL") {
+        setIsDeptModalOpen(true);
+      } else if (authData && authData.department) {
+        setSelectedDepartment(authData.department);
+      }
+
       const calendarData = await AuthService.checkCalendarStatus();
       console.log("Calendar status:", calendarData);
       setCalendarStatus(calendarData);
 
-      // Show success message if calendar is connected
       if (calendarData && calendarData.hasCalendarAccess) {
         setShowCalendarSuccess(true);
         successTimeoutRef.current = setTimeout(() => {
           setShowCalendarSuccess(false);
-        }, 3000); // Hide after 3 seconds
+        }, 3000);
       }
 
-      // Load overview data
       await loadOverviewData();
     } catch (err) {
       console.error("Failed to initialize data:", err);
@@ -103,14 +106,12 @@ const InterviewerInterface: React.FC = () => {
   }, [loadOverviewData]);
 
   useEffect(() => {
-    // Prevent multiple initializations
     if (hasInitialized.current) return;
     hasInitialized.current = true;
 
     initializeData();
   }, [initializeData]);
 
-  // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
       if (successTimeoutRef.current) {
@@ -142,6 +143,31 @@ const InterviewerInterface: React.FC = () => {
     if (successTimeoutRef.current) {
       clearTimeout(successTimeoutRef.current);
     }
+  };
+
+  const handleDepartmentSelect = async (department: string): Promise<void> => {
+    try {
+      setDepartmentLoading(true);
+      setError(null);
+
+      await AuthService.setDepartment(department);
+
+      setSelectedDepartment(department);
+      setIsDeptModalOpen(false);
+
+      await loadOverviewData();
+
+      console.log(`Department successfully set to: ${department}`);
+    } catch (error) {
+      console.error("Failed to set department:", error);
+      setError("Failed to update department. Please try again.");
+    } finally {
+      setDepartmentLoading(false);
+    }
+  };
+
+  const handleCloseDeptModal = (): void => {
+    setIsDeptModalOpen(false);
   };
 
   if (loading) {
@@ -188,27 +214,107 @@ const InterviewerInterface: React.FC = () => {
 
   return (
     <div className="min-h-screen p-2 sm:p-6 bg-gray-50">
+      {/* Department Selection Modal */}
+      {isDeptModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-gray-900">
+                Choose Department
+              </h2>
+              <button
+                onClick={handleCloseDeptModal}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+                disabled={departmentLoading}
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-800 text-sm">{error}</p>
+              </div>
+            )}
+
+            <div className="space-y-3">
+              <button
+                onClick={() => handleDepartmentSelect("SOT")}
+                disabled={departmentLoading}
+                className="w-full p-4 text-left border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="font-medium text-gray-900">SOT</div>
+                    <div className="text-sm text-gray-600">
+                      School of Technology
+                    </div>
+                  </div>
+                  {departmentLoading && (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                  )}
+                </div>
+              </button>
+
+              <button
+                onClick={() => handleDepartmentSelect("SOM")}
+                disabled={departmentLoading}
+                className="w-full p-4 text-left border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="font-medium text-gray-900">SOM</div>
+                    <div className="text-sm text-gray-600">
+                      School of Management
+                    </div>
+                  </div>
+                  {departmentLoading && (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                  )}
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
                 Interviewer Overview
+                {selectedDepartment && (
+                  <span className="text-lg text-gray-600 ml-2">
+                    - {selectedDepartment}
+                  </span>
+                )}
               </h1>
               <p className="text-gray-600 mt-2">
                 Track your interview slots and meeting insights
               </p>
             </div>
-            <button
-              onClick={handleRefresh}
-              disabled={refreshing}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors disabled:opacity-50"
-            >
-              <RefreshCw
-                className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
-              />
-              <span className="text-sm">Refresh</span>
-            </button>
+            <div className="flex items-center gap-3">
+              {selectedDepartment && selectedDepartment !== "GENERAL" && (
+                <button
+                  onClick={() => setIsDeptModalOpen(true)}
+                  disabled={departmentLoading}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors disabled:opacity-50"
+                >
+                  Change Department
+                </button>
+              )}
+              <button
+                onClick={handleRefresh}
+                disabled={refreshing}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors disabled:opacity-50"
+              >
+                <RefreshCw
+                  className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`}
+                />
+                <span className="text-sm">Refresh</span>
+              </button>
+            </div>
           </div>
         </div>
 

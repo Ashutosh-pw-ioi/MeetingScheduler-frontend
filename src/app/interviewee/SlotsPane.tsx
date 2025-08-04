@@ -104,7 +104,7 @@ export default function SlotsPane({
                 );
               } else if (message.includes("No available slots")) {
                 setError(
-                  "No interview slots available in the next 15 days. Please try again later."
+                  null
                 );
               } else {
                 setError(message);
@@ -252,62 +252,14 @@ export default function SlotsPane({
     return (
       <div className="bg-white rounded-r-xl px-6 sm:px-8 sm:pl-0 py-4 sm:py-6 sm:pb-0 flex flex-col items-center justify-center min-h-[400px]">
         <div className="text-center space-y-6 max-w-sm mx-auto">
-          <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto">
-            <svg
-              className="w-8 h-8 text-red-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5l-6.928-12c-.77-.833-2.694-.833-3.464 0l-6.928 12c-.77.833.192 2.5 1.732 2.5z"
-              />
-            </svg>
-          </div>
-
           <div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              Unable to Load Slots
+              No Slots Available
             </h3>
-            <p className="text-gray-600 text-sm leading-relaxed">{error}</p>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              No interview slots available for Today! Please try again later.
+            </p>
           </div>
-
-          {(error.includes("No interviewers") ||
-            error.includes("department")) && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-left">
-              <h4 className="text-blue-800 font-medium text-sm mb-2 flex items-center">
-                <svg
-                  className="w-4 h-4 mr-2"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-                </svg>
-                Need Help?
-              </h4>
-              <div className="space-y-1 text-xs text-blue-700 ml-1">
-                <p>• Call: (555) 123-4567</p>
-                <p>• Email: support@university.edu</p>
-                <p>• Visit: Administration Office</p>
-              </div>
-            </div>
-          )}
-
-          {error.includes("No interview slots available") && (
-            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 text-left">
-              <h4 className="text-purple-800 font-medium text-sm mb-2">
-                Alternative Options:
-              </h4>
-              <div className="space-y-1 text-xs text-purple-700 ml-1">
-                <p>• Check back in a few hours for new slots</p>
-                <p>• Contact administration for priority scheduling</p>
-                <p>• Request a custom time slot if urgent</p>
-              </div>
-            </div>
-          )}
 
           <div className="flex flex-col gap-3 w-full">
             <button
@@ -339,19 +291,7 @@ export default function SlotsPane({
                 </>
               )}
             </button>
-
           </div>
-
-          {error.includes("No interview slots available") && (
-            <div className="border-t pt-4 mt-2">
-              <p className="text-xs text-gray-500 mb-3">
-                Can&lsquo;t find a suitable time?
-              </p>
-              <button className="text-blue-600 hover:text-blue-700 text-sm font-medium underline">
-                Request Custom Time Slot
-              </button>
-            </div>
-          )}
         </div>
       </div>
     );
