@@ -169,7 +169,7 @@ export default function IntervieweesSection() {
           <SimpleTable
             data={tableData}
             searchFields={["name", "email"]}
-            itemsPerPage={5}
+            itemsPerPage={10}
             badgeFields={["slotBooked"]}
             onCellClick={(row, column) => {
               if (column === "details")
