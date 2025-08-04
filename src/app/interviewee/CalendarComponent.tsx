@@ -21,7 +21,7 @@ export default function CalendarComponent({
 
   const today = new Date();
   const highlightedDates = Array.from({ length: 5 }, (_, i) => {
-    const highlightDate = new Date(today);
+    const highlightDate = new Date(today)
     highlightDate.setDate(today.getDate() + i);
     return highlightDate;
   });
@@ -66,7 +66,7 @@ export default function CalendarComponent({
           highlighted: "bg-gray-100 text-gray-900",
           today: "underline",
         }}
-        disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+        disabled={(date) => date <= new Date(new Date().setHours(0, 0, 0, 0))}
       />
     );
   }
@@ -86,7 +86,7 @@ export default function CalendarComponent({
         highlighted: "bg-gray-100 text-gray-900",
         today: "underline",
       }}
-      disabled={(date) => date <= new Date(new Date().setHours(0, 0, 0, 0))}
+      disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
     />
   );
 }
