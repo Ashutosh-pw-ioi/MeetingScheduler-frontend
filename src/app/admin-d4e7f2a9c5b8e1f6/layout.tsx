@@ -2,7 +2,15 @@
 
 import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { Menu, X, ChartPie, User, GraduationCap } from "lucide-react";
+import {
+  Menu,
+  X,
+  ChartPie,
+  User,
+  GraduationCap,
+  UserRoundPlus,
+  Settings,
+} from "lucide-react";
 import Image from "next/image";
 
 const StudentLayout = ({ children }: { children: React.ReactNode }) => {
@@ -31,15 +39,22 @@ const StudentLayout = ({ children }: { children: React.ReactNode }) => {
     {
       id: "operations",
       label: "Operations",
-      icon: GraduationCap,
+      icon: Settings,
       href: "/admin-d4e7f2a9c5b8e1f6/operations",
-    }
+    },
+    {
+      id: "students",
+      label: "Students",
+      icon: UserRoundPlus,
+      href: "/admin-d4e7f2a9c5b8e1f6/students",
+    },
   ];
 
   const getActiveSection = () => {
     if (pathname.includes("/interviewers")) return "interviewers";
     if (pathname.includes("/interviewees")) return "interviewees";
     if (pathname.includes("/operations")) return "operations";
+    if (pathname.includes("/students")) return "students";
     return "overview";
   };
 
