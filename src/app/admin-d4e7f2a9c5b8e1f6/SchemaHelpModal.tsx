@@ -105,7 +105,7 @@ const SchemaHelpModal: React.FC<SchemaHelpModalProps> = ({
                     {schemaInfo.columns.map((col, idx) => (
                       <th
                         key={idx}
-                        className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        className="px-3 py-2 text-left text-xs font-medium text-gray-500 tracking-wider"
                       >
                         {col}
                       </th>
