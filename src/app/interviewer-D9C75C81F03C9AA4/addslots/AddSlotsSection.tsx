@@ -48,14 +48,12 @@ export default function AddSlotsSection() {
 
   const generateTimeOptions = () => {
     const times = [];
-    const rounded = getNextRoundedHalfHour();
-    const [roundedHour, roundedMinute] = rounded.split(":").map(Number);
-    const roundedTotalMinutes = roundedHour * 60 + roundedMinute;
+    const startHour = 8;
+    const endHour = 22;
 
-    for (let hour = 0; hour < 24; hour++) {
+    for (let hour = startHour; hour <= endHour; hour++) {
       for (let minute = 0; minute < 60; minute += 30) {
-        const totalMinutes = hour * 60 + minute;
-        if (totalMinutes < roundedTotalMinutes) continue;
+        if (hour === 22 && minute === 30) break;
 
         const time12 = formatTo12Hour(hour, minute);
         const time24 = `${hour.toString().padStart(2, "0")}:${minute
@@ -64,35 +62,12 @@ export default function AddSlotsSection() {
         times.push({ value: time24, label: time12 });
       }
     }
-
     return times;
   };
 
-  const getNextRoundedHalfHour = () => {
-    const now = new Date();
-    let hour = now.getHours();
-    let minute = now.getMinutes();
-
-    if (minute === 0) {
-      minute = 30;
-    } else if (minute <= 30) {
-      minute = 30;
-    } else {
-      minute = 0;
-      hour += 1;
-    }
-
-    if (hour === 24) hour = 0;
-
-    return `${hour.toString().padStart(2, "0")}:${minute
-      .toString()
-      .padStart(2, "0")}`;
-  };
-
   const timeOptions = generateTimeOptions();
-  const roundedStartTime = getNextRoundedHalfHour();
-  const startIndex = timeOptions.findIndex((t) => t.value === roundedStartTime);
-  const nextTimeOption = timeOptions[startIndex + 1] || timeOptions[startIndex];
+  const defaultStartTime = "08:00";
+  const defaultEndTime = "08:30";
 
   const validateTimeSlot = (
     startTime: string,
@@ -158,7 +133,6 @@ export default function AddSlotsSection() {
 
           if (slots.length > 0) {
             convertedDateSlots[dateKey] = slots;
-            // Parse dateKey in UTC
             const [year, month, day] = dateKey.split("-").map(Number);
             datesWithData.push(new Date(Date.UTC(year, month - 1, day)));
           }
@@ -194,16 +168,14 @@ export default function AddSlotsSection() {
   const handlePlusClick = (date: Date) => {
     const dateKey = formatDateKey(date);
 
-    console.log("Adding slot for date:", date, "dateKey:", dateKey);
-
     const uniqueId = `new-slot-${dateKey}-${Date.now()}-${Math.random()
       .toString(36)
       .substr(2, 9)}`;
 
     const newSlot: TimeSlot = {
       id: uniqueId,
-      startTime: roundedStartTime,
-      endTime: nextTimeOption.value,
+      startTime: defaultStartTime,
+      endTime: defaultEndTime,
       hasError: false,
       isModified: true,
     };
@@ -216,7 +188,6 @@ export default function AddSlotsSection() {
       };
 
       setHasUnsavedChanges(true);
-      console.log("Updated dateSlots after adding:", updatedSlots);
       return updatedSlots;
     });
   };
@@ -227,15 +198,6 @@ export default function AddSlotsSection() {
     field: "startTime" | "endTime",
     value: string
   ) => {
-    console.log(
-      "Changing time for dateKey:",
-      dateKey,
-      "field:",
-      field,
-      "value:",
-      value
-    );
-
     setDateSlots((prev) => ({
       ...prev,
       [dateKey]:
@@ -247,9 +209,9 @@ export default function AddSlotsSection() {
               const startIndex = timeOptions.findIndex(
                 (t) => t.value === value
               );
-              const nextTimeOption = timeOptions[startIndex + 1];
-              if (nextTimeOption) {
-                updatedSlot.endTime = nextTimeOption.value;
+              const nextOption = timeOptions[startIndex + 1];
+              if (nextOption) {
+                updatedSlot.endTime = nextOption.value;
               }
             }
 
@@ -284,27 +246,11 @@ export default function AddSlotsSection() {
       setSaving(true);
       setError(null);
 
-      // Parse dateKey in UTC
       const [year, month, day] = dateKey.split("-").map(Number);
       const date = new Date(Date.UTC(year, month - 1, day));
 
-      console.log("Deleting slot for date:", date, "dateKey:", dateKey);
-      console.log(
-        "Date components for deletion - Year:",
-        year,
-        "Month:",
-        month,
-        "Day:",
-        day
-      );
-
       const startDateTime = createISODateTime(date, slot.startTime);
       const endDateTime = createISODateTime(date, slot.endTime);
-
-      console.log("Delete request:", {
-        startTime: startDateTime,
-        endTime: endDateTime,
-      });
 
       await AvailabilityService.deleteAvailabilityRange({
         startTime: startDateTime,
@@ -340,20 +286,11 @@ export default function AddSlotsSection() {
   const saveAvailabilityForDate = async (dateKey: string): Promise<void> => {
     const slots = dateSlots[dateKey] || [];
 
-    console.log("Saving availability for dateKey:", dateKey, "slots:", slots);
-    console.log("DateKey breakdown:", dateKey.split("-"));
-
     const hasErrors = slots.some((slot) => slot.hasError);
-    if (hasErrors) {
-      console.log("Skipping save due to validation errors");
-      return;
-    }
+    if (hasErrors) return;
 
     const hasModifiedSlots = slots.some((slot) => slot.isModified);
-    if (!hasModifiedSlots && slots.length > 0) {
-      console.log("No modified slots to save");
-      return;
-    }
+    if (!hasModifiedSlots && slots.length > 0) return;
 
     try {
       setSaving(true);
@@ -364,15 +301,9 @@ export default function AddSlotsSection() {
         endTime: slot.endTime,
       }));
 
-      console.log(`Saving availability for ${dateKey}:`, {
+      await AvailabilityService.setDayAvailability({
         date: dateKey,
         timeRanges,
-      });
-      console.log("Confirming dateKey format is correct:", dateKey);
-
-      const result = await AvailabilityService.setDayAvailability({
-        date: dateKey,
-        timeRanges: timeRanges,
       });
 
       setDateSlots((prev) => ({
@@ -383,7 +314,6 @@ export default function AddSlotsSection() {
 
       setHasUnsavedChanges(false);
 
-      // Create proper UTC date for display
       const [year, month, day] = dateKey.split("-").map(Number);
       const displayDate = new Date(Date.UTC(year, month - 1, day));
 
@@ -400,7 +330,6 @@ export default function AddSlotsSection() {
         )}`
       );
       setTimeout(() => setSuccessMessage(null), 2000);
-      console.log("Availability saved successfully for", dateKey, result);
     } catch (error) {
       console.error("Failed to save availability:", error);
       setError("Failed to save availability. Please try again.");
@@ -448,10 +377,8 @@ export default function AddSlotsSection() {
   const handleMultipleDatesSelection = (dates: Date | Date[]) => {
     if (Array.isArray(dates)) {
       setSelectedDates(dates);
-
       dates.forEach((date) => {
         const dateKey = formatDateKey(date);
-        console.log("Processing selected date:", date, "as dateKey:", dateKey);
         if (!dateSlots[dateKey]) {
           setDateSlots((prev) => ({
             ...prev,
@@ -463,7 +390,6 @@ export default function AddSlotsSection() {
   };
 
   const getSelectedDates = (): Date[] => {
-    console.log(selectedDates, "Selected dates for rendering");
     return selectedDates;
   };
 
@@ -596,22 +522,8 @@ export default function AddSlotsSection() {
                     {getSelectedDates()
                       .sort((a, b) => a.getTime() - b.getTime())
                       .map((selDate, index) => {
-                        console.log(selDate, "Selected date for rendering");
                         const dateKey = formatDateKey(selDate);
-                        console.log(
-                          dateKey,
-                          "Formatted date key for rendering"
-                        );
                         const slotsForDate = dateSlots[dateKey] || [];
-
-                        console.log(
-                          "Rendering date:",
-                          selDate,
-                          "dateKey:",
-                          dateKey,
-                          "slots:",
-                          slotsForDate
-                        );
 
                         return (
                           <div
