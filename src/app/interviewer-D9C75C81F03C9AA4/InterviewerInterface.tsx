@@ -216,7 +216,7 @@ const InterviewerInterface: React.FC = () => {
     <div className="min-h-screen p-2 sm:p-6 bg-gray-50">
       {/* Department Selection Modal */}
       {isDeptModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/25 backdrop-blur-sm">
           <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-900">
@@ -224,7 +224,7 @@ const InterviewerInterface: React.FC = () => {
               </h2>
               <button
                 onClick={handleCloseDeptModal}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
                 disabled={departmentLoading}
               >
                 <X className="w-5 h-5" />
@@ -241,7 +241,7 @@ const InterviewerInterface: React.FC = () => {
               <button
                 onClick={() => handleDepartmentSelect("SOT")}
                 disabled={departmentLoading}
-                className="w-full p-4 text-left border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full p-4 text-left border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 <div className="flex items-center justify-between">
                   <div>
@@ -259,7 +259,7 @@ const InterviewerInterface: React.FC = () => {
               <button
                 onClick={() => handleDepartmentSelect("SOM")}
                 disabled={departmentLoading}
-                className="w-full p-4 text-left border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full p-4 text-left border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               >
                 <div className="flex items-center justify-between">
                   <div>
