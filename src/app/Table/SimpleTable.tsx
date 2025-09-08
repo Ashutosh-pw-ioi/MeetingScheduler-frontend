@@ -1,51 +1,70 @@
-// Table/SimpleTable.tsx - Updated with hyperlink field support
 "use client";
 
 import React, { useState, useMemo, useEffect } from "react";
-import { Search, ExternalLink } from "lucide-react";
+import {
+  Search,
+  ExternalLink,
+  Edit,
+  Trash2,
+  X,
+  Check,
+  AlertTriangle,
+} from "lucide-react";
 
 export interface TableColumn {
   key: string;
   label: string;
-  render?: (row: TableItem) => React.ReactNode;
+  render?: (row: any) => React.ReactNode;
 }
 
-export interface TableItem {
-  [key: string]: any;
-}
+export type TableItem<T = any> = T;
 
-interface SimpleTableProps {
-  data: TableItem[];
+interface SimpleTableProps<T extends Record<string, any>> {
+  data: T[];
   itemsPerPage?: number;
   badgeFields?: string[];
   searchFields?: string[];
-  hyperlinkFields?: string[]; // New prop for hyperlink fields
-  onCellClick?: (row: TableItem, columnKey: string) => void;
+  hyperlinkFields?: string[];
+  onCellClick?: (row: T, columnKey: string) => void;
+  onEdit?: (updatedRow: T) => void;
+  onDelete?: (id: T["id"]) => void;
+  title?: string;
 }
 
-const SimpleTable: React.FC<SimpleTableProps> = ({
+const SimpleTable = <T extends Record<string, any>>({
   data,
-  itemsPerPage = 5,
+  itemsPerPage = 10,
   badgeFields = [],
   searchFields = [],
-  hyperlinkFields = [], // New prop
+  hyperlinkFields = [],
   onCellClick,
-}) => {
+  onEdit,
+  onDelete,
+  title,
+}: SimpleTableProps<T>) => {
   const columns = useMemo(() => {
     if (data.length === 0) return [];
-    
-    // Generate columns but replace 'id' with 'displayId' and hide actual 'id'
+
     return Object.keys(data[0])
-      .filter(key => key !== 'id') // Hide the UUID id field
+      .filter((key) => key !== "id")
       .map((key) => ({
-        key: key === 'displayId' ? 'displayId' : key,
-        label: key === 'displayId' ? 'ID' : key.charAt(0).toUpperCase() + key.slice(1),
+        key: key === "displayId" ? "displayId" : key,
+        label:
+          key === "displayId"
+            ? "ID"
+            : key.charAt(0).toUpperCase() +
+              key.slice(1).replace(/([A-Z])/g, " $1"),
       }));
   }, [data]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState(data);
+
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [editingRow, setEditingRow] = useState<T | null>(null);
+  const [rowToDelete, setRowToDelete] = useState<T | null>(null);
 
   useEffect(() => {
     if (!searchQuery) {
@@ -55,7 +74,7 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
       const newData = data.filter((item) =>
         searchFields.length > 0
           ? searchFields.some((field) =>
-              String(item[field] ?? "")
+              String(item[field as keyof T] ?? "")
                 .toLowerCase()
                 .includes(lowerQuery)
             )
@@ -75,19 +94,21 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
     return filteredData.slice(start, start + itemsPerPage);
   }, [filteredData, currentPage, itemsPerPage]);
 
-  // Helper function to render hyperlink
   const renderHyperlink = (url: string, text?: string) => {
-    if (!url || url === 'N/A' || url === '' || url === 'null' || url === 'undefined') {
+    if (
+      !url ||
+      url === "N/A" ||
+      url === "" ||
+      url === "null" ||
+      url === "undefined"
+    ) {
       return (
-        <span className="text-gray-400 text-sm italic">
-          No link available
-        </span>
+        <span className="text-gray-400 text-sm italic">No link available</span>
       );
     }
 
-    // Ensure URL has protocol
-    const formattedUrl = url.startsWith('http') ? url : `https://${url}`;
-    const displayText = text || 'Open Link';
+    const formattedUrl = url.startsWith("http") ? url : `https://${url}`;
+    const displayText = text || "Open Link";
 
     return (
       <a
@@ -95,7 +116,7 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-full text-sm font-medium transition-all duration-200 hover:shadow-sm group"
-        onClick={(e) => e.stopPropagation()} // Prevent row click
+        onClick={(e) => e.stopPropagation()}
       >
         <span>{displayText}</span>
         <ExternalLink className="w-3 h-3 group-hover:scale-110 transition-transform" />
@@ -103,26 +124,37 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
     );
   };
 
-  const renderCell = (item: TableItem, column: TableColumn) => {
+  const renderCell = (item: T, column: TableColumn) => {
     if (column.render) return column.render(item);
 
-    const value = item[column.key];
+    const value = item[column.key as keyof T];
 
-    // Handle hyperlink fields
     if (hyperlinkFields.includes(column.key)) {
-      // Check if it's a JSX element (already rendered hyperlink)
       if (React.isValidElement(value)) {
         return value;
       }
-      // Otherwise render as hyperlink
-      return renderHyperlink(value);
+      return renderHyperlink(value as string);
     }
 
-    // Handle badge fields
+    if (column.key === "status") {
+      const isScheduled = value === "Interview Scheduled";
+      return (
+        <span
+          className={`inline-block px-4 py-1 text-xs rounded-md font-medium border ${
+            isScheduled
+              ? "bg-green-100 text-green-800 border-green-200"
+              : "bg-red-100 text-red-800 border-red-200"
+          }`}
+        >
+          {String(value) || "Unknown"}
+        </span>
+      );
+    }
+
     if (badgeFields.includes(column.key)) {
       return (
-        <span className="inline-block px-4 py-1 text-xs rounded-md bg-gray-200">
-          {value}
+        <span className="inline-block px-4 py-1 text-xs rounded-md bg-gray-200 text-gray-800">
+          {String(value)}
         </span>
       );
     }
@@ -130,8 +162,67 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
     return String(value ?? "");
   };
 
+  const handleEditClick = (row: T) => {
+    setEditingRow({ ...row });
+    setEditModalOpen(true);
+  };
+
+  const handleEditChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    if (!editingRow) return;
+    const { name, value } = e.target;
+
+    let processedValue = value;
+    if (!isNaN(Number(value)) && value.trim() !== "") {
+      processedValue = value;
+    }
+
+    setEditingRow({
+      ...editingRow,
+      [name]: processedValue,
+    });
+  };
+
+  const handleSaveEdit = () => {
+    if (!editingRow || !onEdit) return;
+
+    onEdit(editingRow);
+    setEditModalOpen(false);
+    setEditingRow(null);
+  };
+
+  const closeEditModal = () => {
+    setEditModalOpen(false);
+    setEditingRow(null);
+  };
+
+  const handleDeleteClick = (row: T) => {
+    setRowToDelete(row);
+    setDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!rowToDelete || !onDelete) return;
+
+    onDelete(rowToDelete.id as T["id"]);
+    setDeleteModalOpen(false);
+    setRowToDelete(null);
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModalOpen(false);
+    setRowToDelete(null);
+  };
+
   return (
     <div className="bg-white shadow rounded-sm overflow-hidden border">
+      {title && (
+        <div className="p-4 border-b">
+          <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+        </div>
+      )}
+
       <div className="p-4 border-b">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -152,24 +243,33 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className="text-left px-4 py-3 font-medium text-gray-700 text-sm"
+                  className="text-left px-4 py-3 font-medium text-gray-700 text-sm whitespace-nowrap"
                 >
                   {column.label}
                 </th>
               ))}
+              {(onEdit || onDelete) && (
+                <th className="text-left px-4 py-3 font-medium text-gray-700 text-sm whitespace-nowrap">
+                  Actions
+                </th>
+              )}
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {currentData.map((item, idx) => (
-              <tr key={item.id || idx} className="hover:bg-gray-50 transition-colors">
+              <tr
+                key={item.id || idx}
+                className="hover:bg-gray-50 transition-colors"
+              >
                 {columns.map((column) => (
                   <td
                     key={column.key}
                     className={`px-4 py-5 text-gray-600 ${
-                      hyperlinkFields.includes(column.key) ? '' : 'cursor-pointer'
-                    }`}
+                      hyperlinkFields.includes(column.key)
+                        ? ""
+                        : "cursor-pointer"
+                    } whitespace-nowrap`}
                     onClick={() => {
-                      // Don't trigger onCellClick for hyperlink fields
                       if (!hyperlinkFields.includes(column.key)) {
                         onCellClick?.(item, column.key);
                       }
@@ -178,12 +278,42 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
                     {renderCell(item, column)}
                   </td>
                 ))}
+                {(onEdit || onDelete) && (
+                  <td className="px-4 py-5 whitespace-nowrap">
+                    <div className="flex space-x-2">
+                      {onEdit && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditClick(item);
+                          }}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer"
+                          title="Edit"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                      )}
+                      {onDelete && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteClick(item);
+                          }}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                )}
               </tr>
             ))}
             {currentData.length === 0 && (
               <tr>
                 <td
-                  colSpan={columns.length}
+                  colSpan={columns.length + (onEdit || onDelete ? 1 : 0)}
                   className="text-center py-8 text-gray-500 text-sm"
                 >
                   <div className="flex flex-col items-center gap-2">
@@ -200,7 +330,7 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
       {filteredData.length > itemsPerPage && (
         <div className="p-4 flex justify-between items-center border-t bg-gray-50">
           <p className="text-sm text-gray-600">
-            Showing {((currentPage - 1) * itemsPerPage) + 1} to{" "}
+            Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
             {Math.min(currentPage * itemsPerPage, filteredData.length)} of{" "}
             {filteredData.length} results
           </p>
@@ -213,7 +343,8 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
               Previous
             </button>
             <span className="px-3 py-2 text-sm text-gray-600">
-              Page {currentPage} of {Math.ceil(filteredData.length / itemsPerPage)}
+              Page {currentPage} of{" "}
+              {Math.ceil(filteredData.length / itemsPerPage)}
             </span>
             <button
               disabled={
@@ -224,6 +355,107 @@ const SimpleTable: React.FC<SimpleTableProps> = ({
             >
               Next
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* EDIT MODAL */}
+      {editModalOpen && editingRow && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={closeEditModal}
+        >
+          <div
+            className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] flex flex-col shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between p-5 border-b">
+              <h3 className="text-lg font-bold text-gray-800">Edit Record</h3>
+              <button
+                onClick={closeEditModal}
+                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            <div className="p-5 overflow-y-auto max-h-[60vh]">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {columns.map((column) => (
+                  <div key={column.key}>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      {column.label}
+                    </label>
+                    <input
+                      type="text"
+                      name={column.key}
+                      value={editingRow[column.key as keyof T] ?? ""}
+                      onChange={handleEditChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex justify-end space-x-3 p-5 border-t bg-gray-50">
+              <button
+                onClick={closeEditModal}
+                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSaveEdit}
+                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-900 transition-colors flex items-center gap-2 cursor-pointer"
+              >
+                <Check className="w-4 h-4" />
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* DELETE MODAL */}
+      {deleteModalOpen && rowToDelete && (
+        <div
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={closeDeleteModal}
+        >
+          <div
+            className="bg-white rounded-lg w-full max-w-md p-6 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-center mb-4">
+              <div className="p-3 bg-red-100 rounded-full">
+                <AlertTriangle className="w-8 h-8 text-red-600" />
+              </div>
+            </div>
+
+            <h3 className="text-lg font-bold text-center text-gray-800 mb-2">
+              Confirm Deletion
+            </h3>
+            <p className="text-center text-gray-600 mb-6">
+              Are you sure you want to delete this record? This action cannot be
+              undone.
+            </p>
+
+            <div className="flex justify-center space-x-4">
+              <button
+                onClick={closeDeleteModal}
+                className="px-5 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                className="px-5 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors flex items-center gap-2 cursor-pointer"
+              >
+                <Trash2 className="w-4 h-4" />
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       )}
