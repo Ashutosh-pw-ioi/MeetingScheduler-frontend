@@ -151,6 +151,23 @@ const SimpleTable = <T extends Record<string, any>>({
       );
     }
 
+    // 👇 Department-specific colors
+    if (column.key === "department") {
+      const departmentColors = {
+        SOT: "bg-blue-100 text-blue-800 border-blue-200",       // School of Technology = Blue
+        SOM: "bg-purple-100 text-purple-800 border-purple-200", // School of Management = Purple
+        GENERAL: "bg-gray-100 text-gray-800 border-gray-200"     // General = Gray
+      };
+      
+      const colorClass = departmentColors[value as keyof typeof departmentColors] || departmentColors.GENERAL;
+      
+      return (
+        <span className={`inline-block px-4 py-1 text-xs rounded-md font-medium border ${colorClass}`}>
+          {String(value)}
+        </span>
+      );
+    }
+
     if (badgeFields.includes(column.key)) {
       return (
         <span className="inline-block px-4 py-1 text-xs rounded-md bg-gray-200 text-gray-800">
@@ -385,14 +402,35 @@ const SimpleTable = <T extends Record<string, any>>({
                   <div key={column.key}>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       {column.label}
+                      {column.key === "status" && (
+                        <span className="text-xs text-gray-500 ml-2">(Read-only)</span>
+                      )}
                     </label>
-                    <input
-                      type="text"
-                      name={column.key}
-                      value={editingRow[column.key as keyof T] ?? ""}
-                      onChange={handleEditChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900"
-                    />
+                    {column.key === "department" ? (
+                      <select
+                        name={column.key}
+                        value={editingRow[column.key as keyof T] ?? ""}
+                        onChange={handleEditChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900"
+                      >
+                        <option value="SOT">SOT - School of Technology</option>
+                        <option value="SOM">SOM - School of Management</option>
+                        <option value="GENERAL">GENERAL</option>
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        name={column.key}
+                        value={editingRow[column.key as keyof T] ?? ""}
+                        onChange={handleEditChange}
+                        disabled={column.key === "status"}
+                        className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900 ${
+                          column.key === "status" 
+                            ? "bg-gray-100 text-gray-500 cursor-not-allowed"
+                            : ""
+                        }`}
+                      />
+                    )}
                   </div>
                 ))}
               </div>

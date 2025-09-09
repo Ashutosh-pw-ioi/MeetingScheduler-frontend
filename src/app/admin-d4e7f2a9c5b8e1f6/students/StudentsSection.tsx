@@ -1,116 +1,154 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import UploadSection from "../UploadSection";
 import teacherSchemaInfo from "../StudentSchemaInfo";
 import SimpleTable from "@/app/Table/SimpleTable";
+import ShimmerLoader from "./ShimmerLoader"; 
 
 const backendUrl = process.env.NEXT_PUBLIC_API_URL;
+const baseUrl = `${backendUrl}/api/student`;
 
-// 👇 Define exact type for student data
 interface StudentRow {
-  id: number;
+  id: string;
   applicationId: string;
-  studentName: string;
+  studentName: string; 
   email: string;
-  phoneNumber: string;
+  phoneNumber: string; 
+  department: string;
   status: string;
 }
 
-// 👇 Initialize with correct type
-const initialMockData: StudentRow[] = [
-  {
-    id: 1,
-    applicationId: "APP001",
-    studentName: "Alice Johnson",
-    email: "alice.johnson@example.com",
-    phoneNumber: "+1-555-123-4567",
-    status: "Interview Scheduled",
-  },
-  {
-    id: 2,
-    applicationId: "APP002",
-    studentName: "Bob Smith",
-    email: "bob.smith@example.com",
-    phoneNumber: "+1-555-987-6543",
-    status: "Not Scheduled",
-  },
-  {
-    id: 3,
-    applicationId: "APP003",
-    studentName: "Carol Davis",
-    email: "carol.davis@example.com",
-    phoneNumber: "+1-555-456-7890",
-    status: "Interview Scheduled",
-  },
-  {
-    id: 4,
-    applicationId: "APP004",
-    studentName: "David Wilson",
-    email: "david.wilson@example.com",
-    phoneNumber: "+1-555-321-0987",
-    status: "Not Scheduled",
-  },
-  {
-    id: 5,
-    applicationId: "APP005",
-    studentName: "Eva Brown",
-    email: "eva.brown@example.com",
-    phoneNumber: "+1-555-654-3210",
-    status: "Interview Scheduled",
-  },
-];
-
 export default function StudentsSection() {
-  const [tableData, setTableData] = useState<StudentRow[]>(initialMockData);
+  const [tableData, setTableData] = useState<StudentRow[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true); // 👈 New state for initial load
 
-  // ✏️ Handle Edit — typed correctly
-  const handleEdit = (updatedRow: StudentRow) => {
-    setTableData((prev) =>
-      prev.map((row) => (row.id === updatedRow.id ? updatedRow : row))
-    );
-    console.log("✅ Updated row:", updatedRow);
+  const fetchStudents = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${baseUrl}/getAllStudents`);
+      const result = await response.json();
+
+      if (result.success) {
+        const transformedData: StudentRow[] = result.data.map((student: any) => ({
+          id: student.id,
+          applicationId: student.applicationId,
+          studentName: student.name,
+          email: student.email,
+          phoneNumber: student.phone,
+          department: student.department,
+          status: student.status === "booked" ? "Interview Scheduled" : "Not Scheduled",
+        }));
+        setTableData(transformedData);
+      }
+    } catch (error) {
+      console.error("Failed to fetch students:", error);
+    } finally {
+      setLoading(false);
+      setInitialLoading(false); 
+    }
   };
 
-  // 🗑️ Handle Delete — by ID
-  const handleDelete = (id: number) => {
-    setTableData((prev) => prev.filter((row) => row.id !== id));
-    console.log("🗑️ Deleted row with ID:", id);
+  const handleEdit = async (updatedRow: StudentRow) => {
+    try {
+      const updateData = {
+        applicationId: updatedRow.applicationId,
+        name: updatedRow.studentName,
+        email: updatedRow.email,
+        phone: updatedRow.phoneNumber,
+        department: updatedRow.department,
+      };
+
+      const response = await fetch(`${baseUrl}/updateStudent/${updatedRow.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updateData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        await fetchStudents();
+        console.log("✅ Updated row:", updatedRow);
+      } else {
+        console.error("Update failed:", result.message);
+        alert("Failed to update student: " + result.message);
+      }
+    } catch (error) {
+      console.error("Update error:", error);
+      alert("Failed to update student");
+    }
   };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const response = await fetch(`${baseUrl}/deleteStudent/${id}`, {
+        method: "DELETE",
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setTableData((prev) => prev.filter((row) => row.id !== id));
+        console.log("🗑️ Deleted row with ID:", id);
+      } else {
+        console.error("Delete failed:", result.message);
+        alert("Failed to delete student: " + result.message);
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      alert("Failed to delete student");
+    }
+  };
+
+  const handleUploadSuccess = () => {
+    fetchStudents();
+  };
+
+  useEffect(() => {
+    fetchStudents();
+  }, []);
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex justify-between">
         <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
           Add Students
         </h2>
       </div>
 
-      {/* Upload Section */}
       <UploadSection
-        uploadUrl={`${backendUrl}/api/student/uploadStudents`}
+        uploadUrl={`${baseUrl}/uploadStudents`}
         schemaInfo={teacherSchemaInfo}
+        onSuccess={handleUploadSuccess} 
       />
 
-      {/* Students Table */}
       <div className="mt-8">
         <h3 className="text-xl font-semibold text-gray-700 mb-4">
-          Students List
+          Students List {loading && !initialLoading && "(Refreshing...)"} {/* 👈 Updated loading text */}
         </h3>
-        <SimpleTable
-          title="Student Records"
-          data={tableData}
-          searchFields={["applicationId", "studentName"]}
-          itemsPerPage={10}
-          hyperlinkFields={[]}
-          badgeFields={["status"]}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onCellClick={(row, column) => {
-            console.log("🖱️ Cell clicked:", row, column);
-          }}
-        />
+        
+        {/* 👇 Conditional rendering with shimmer effect */}
+        {initialLoading ? (
+          <ShimmerLoader rows={8} />
+        ) : (
+          <SimpleTable
+            title="Student Records"
+            data={tableData}
+            searchFields={["applicationId", "studentName"]}
+            itemsPerPage={10}
+            hyperlinkFields={[]}
+            badgeFields={["status", "department"]}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onCellClick={(row, column) => {
+              console.log("🖱️ Cell clicked:", row, column);
+            }}
+          />
+        )}
       </div>
     </div>
   );
