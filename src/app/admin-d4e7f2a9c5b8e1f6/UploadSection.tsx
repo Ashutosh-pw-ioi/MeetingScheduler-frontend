@@ -155,7 +155,7 @@ export default function UploadSection({
   };
 
   return (
-    <div className="w-full mx-auto px-2 sm:px-0 h-[550px]">
+    <div className="w-full mx-auto px-2 sm:px-0 h-[250px]">
       <div className="bg-white rounded-lg shadow-lg p-3 sm:p-4 md:p-2 relative h-full">
         <button
           onClick={() => setShowSchemaHelp(true)}
